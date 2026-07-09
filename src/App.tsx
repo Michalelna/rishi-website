@@ -122,7 +122,7 @@ function HomePageView() {
             <div style={{ position: 'absolute', inset: 0, background: panel.tint }} />
             <div style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.48) 100%)',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.55) 100%)',
             }} />
 
             {i < homePanels.length - 1 && (
