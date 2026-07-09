@@ -37,7 +37,7 @@ function formatDate(dateStr?: string) {
 }
 
 async function fetchEvents(): Promise<V1Event[]> {
-  const headers = await wixClient.auth.getAuthHeaders()
+  const { headers } = await wixClient.auth.getAuthHeaders()
   const res = await fetch(
     `https://www.wixapis.com/events/v1/events?limit=10`,
     {
@@ -54,7 +54,7 @@ async function fetchEvents(): Promise<V1Event[]> {
 }
 
 async function createRsvp(eventId: string, form: RsvpForm) {
-  const headers = await wixClient.auth.getAuthHeaders()
+  const { headers } = await wixClient.auth.getAuthHeaders()
   const res = await fetch(`https://www.wixapis.com/events/v1/rsvp`, {
     method: 'POST',
     headers: {
