@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rishi-webs-06f30fec-michaleln.wix-site-host.com/sitemap.xml
