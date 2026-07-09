@@ -377,7 +377,7 @@ export default function CommunityPage() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(15,35,20,0.5) 60%, #1c1820 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(15,35,20,0.72) 60%, #1c1820 100%)',
         }} />
 
         <motion.h1

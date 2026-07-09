@@ -56,7 +56,7 @@ export default function PracticePage() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(8,15,30,0.6) 60%, #1c1820 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(8,15,30,0.75) 60%, #1c1820 100%)',
         }} />
 
         <motion.h1

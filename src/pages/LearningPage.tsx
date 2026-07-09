@@ -611,7 +611,7 @@ export default function LearningPage() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(10,6,2,0.65) 60%, #1c1820 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(10,6,2,0.78) 60%, #1c1820 100%)',
         }} />
 
         <motion.h1
