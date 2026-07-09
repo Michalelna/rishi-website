@@ -5,7 +5,7 @@ import ChakraBody from '../components/ChakraBody'
 
 const subNav = [
   'Sanskrit',
-  'Introduction to Yoga',
+  'Yoga',
 ]
 
 const courses = [
@@ -775,6 +775,79 @@ export default function LearningPage() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.4 }}
           >
+            {/* Yoga History */}
+            <div style={{ padding: '72px 80px 0' }}>
+              <div style={{ maxWidth: 820, margin: '0 auto' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 40 }}>
+                  <div style={{ width: 32, height: 1, background: 'rgba(201,169,110,0.5)', flexShrink: 0 }} />
+                  <span style={{
+                    fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
+                    letterSpacing: '0.38em', color: 'rgba(201,169,110,0.7)', textTransform: 'uppercase',
+                  }}>Origins</span>
+                </div>
+                <h2 style={{
+                  fontFamily: "'Cormorant Garamond', serif", fontSize: 42, fontWeight: 300,
+                  letterSpacing: '0.05em', color: 'var(--white)', marginBottom: 40, lineHeight: 1.15,
+                }}>A Brief History of Yoga</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px 56px' }}>
+                  {[
+                    {
+                      era: 'c. 3000 BCE',
+                      title: 'Vedic Origins',
+                      body: 'Yoga\'s earliest roots appear in the Indus Valley civilisation. The Rigveda — the oldest of the four Vedas — introduces the word "yuj", meaning to yoke or unite. Vedic yoga was centred on ritual, sacrifice, and chanting to connect with the divine.',
+                    },
+                    {
+                      era: 'c. 800–200 BCE',
+                      title: 'Upanishadic Era',
+                      body: 'The Upanishads distilled thousands of Vedic scriptures into the essential truth: Atman (individual self) is Brahman (universal self). This era gave yoga its philosophical core — the pursuit of liberation through self-knowledge, breath, and withdrawal of the senses.',
+                    },
+                    {
+                      era: 'c. 400 BCE – 200 CE',
+                      title: 'Classical Period',
+                      body: 'Patañjali codified the practice into 196 sutras — the Yoga Sutras — organising the path into eight limbs (Ashtanga): ethical restraints, personal observances, posture, breath, withdrawal, concentration, meditation, and samadhi. This remains the definitive classical text.',
+                    },
+                    {
+                      era: 'c. 500–1500 CE',
+                      title: 'Tantra & Hatha Yoga',
+                      body: 'Tantra introduced the body as a vehicle for liberation rather than an obstacle. Hatha Yoga emerged — systematising asana, pranayama, mudra, and bandha. The Hatha Yoga Pradipika (c. 1350 CE) became its foundational manual, describing the body as a temple of the divine.',
+                    },
+                    {
+                      era: '1800s – Early 1900s',
+                      title: 'Modern Revival',
+                      body: 'Swami Vivekananda introduced yoga to the West at the 1893 Parliament of Religions in Chicago. Teachers like Krishnamacharya later systematised asana practice in Mysore, training students who would become the founding teachers of modern yoga: Iyengar, Jois, and Desikachar.',
+                    },
+                    {
+                      era: '1960s – Present',
+                      title: 'Global Yoga',
+                      body: 'Yoga crossed all borders. From Kundalini brought by Yogi Bhajan to the studios of every city on earth, the practice has branched into hundreds of styles. Despite this diversity, the essence remains unchanged: union — of body and mind, self and world, individual and infinite.',
+                    },
+                  ].map((item, i) => (
+                    <motion.div
+                      key={item.era}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.08, duration: 0.6 }}
+                      style={{ paddingTop: 24, borderTop: '1px solid rgba(245,240,232,0.07)' }}
+                    >
+                      <span style={{
+                        fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
+                        letterSpacing: '0.28em', color: 'rgba(201,169,110,0.65)', textTransform: 'uppercase',
+                        display: 'block', marginBottom: 10,
+                      }}>{item.era}</span>
+                      <h3 style={{
+                        fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 400,
+                        letterSpacing: '0.04em', color: 'rgba(245,240,232,0.92)', marginBottom: 12,
+                      }}>{item.title}</h3>
+                      <p style={{
+                        fontFamily: "'Raleway', sans-serif", fontSize: 12, fontWeight: 300,
+                        lineHeight: 1.85, color: 'rgba(245,240,232,0.58)', letterSpacing: '0.02em',
+                      }}>{item.body}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Chakra body */}
             <ChakraBody />
 
