@@ -11,12 +11,10 @@ import { TriangleSymbol, DiamondSymbol, PracticeSymbol } from './components/Symb
 
 type Page = 'home' | 'learning' | 'practice' | 'journal' | 'community'
 
-const pageTransition = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.45 },
-}
+const SPRING = { type: 'spring' as const, stiffness: 70, damping: 18, mass: 1 }
+
+const pageEnter = { opacity: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } }
+const pageExit  = { opacity: 0, transition: { duration: 0.25, ease: 'easeIn' } }
 
 const homePanels = [
   {
@@ -106,6 +104,7 @@ function HomePageView() {
           >
             <motion.div
               layoutId={`panel-bg-${panel.id}`}
+              transition={SPRING}
               style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}
             >
               <motion.div
@@ -134,6 +133,7 @@ function HomePageView() {
 
             <motion.div
               layoutId={`panel-symbol-${panel.id}`}
+              transition={SPRING}
               style={{
                 position: 'absolute',
                 top: 0, bottom: 140,
@@ -154,6 +154,7 @@ function HomePageView() {
 
             <motion.div
               layoutId={`panel-label-${panel.id}`}
+              transition={SPRING}
               style={{
                 position: 'absolute', bottom: 68, left: 0, right: 0,
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, zIndex: 4,
@@ -248,30 +249,45 @@ function AppInner() {
       />
 
       <main id="main-content" tabIndex={-1} style={{ outline: 'none' }}>
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={
-              <motion.div key="home" {...pageTransition}>
+              <motion.div key="home"
+                initial={{ opacity: 0 }} animate={pageEnter} exit={pageExit}
+                style={{ position: 'absolute', inset: 0 }}
+              >
                 <HomePageView />
               </motion.div>
             } />
             <Route path="/learning" element={
-              <motion.div key="learning" {...pageTransition} style={{ paddingTop: 'var(--nav-height)' }}>
+              <motion.div key="learning"
+                initial={{ opacity: 0 }} animate={pageEnter} exit={pageExit}
+                style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh' }}
+              >
                 <LearningPage />
               </motion.div>
             } />
             <Route path="/practice" element={
-              <motion.div key="practice" {...pageTransition} style={{ paddingTop: 'var(--nav-height)' }}>
+              <motion.div key="practice"
+                initial={{ opacity: 0 }} animate={pageEnter} exit={pageExit}
+                style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh' }}
+              >
                 <PracticePage />
               </motion.div>
             } />
             <Route path="/journal" element={
-              <motion.div key="journal" {...pageTransition} style={{ paddingTop: 'var(--nav-height)' }}>
+              <motion.div key="journal"
+                initial={{ opacity: 0 }} animate={pageEnter} exit={pageExit}
+                style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh' }}
+              >
                 <JournalPage />
               </motion.div>
             } />
             <Route path="/community" element={
-              <motion.div key="community" {...pageTransition} style={{ paddingTop: 'var(--nav-height)' }}>
+              <motion.div key="community"
+                initial={{ opacity: 0 }} animate={pageEnter} exit={pageExit}
+                style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh' }}
+              >
                 <CommunityPage />
               </motion.div>
             } />

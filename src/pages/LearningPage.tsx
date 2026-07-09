@@ -600,6 +600,7 @@ export default function LearningPage() {
       }}>
         <motion.div
           layoutId="panel-bg-learning"
+          transition={{ type: 'spring', stiffness: 70, damping: 18, mass: 1 }}
           style={{
             position: 'absolute',
             inset: 0,
@@ -616,6 +617,7 @@ export default function LearningPage() {
 
         <motion.h1
           layoutId="panel-label-learning"
+          transition={{ type: 'spring', stiffness: 70, damping: 18, mass: 1 }}
           animate={{ opacity: 1 }}
           style={{
             position: 'absolute',
