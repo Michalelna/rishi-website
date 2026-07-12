@@ -132,7 +132,7 @@ export default function PracticePage() {
       </div>
 
       {/* Practice selector */}
-      <div style={{ padding: '80px 80px 120px' }}>
+      <div style={{ padding: '80px 80px 60px' }}>
         <div style={{
           display: 'flex',
           flexDirection: 'column',
@@ -267,6 +267,15 @@ export default function PracticePage() {
           ))}
         </div>
       </div>
+      {/* Bottom gradient fade */}
+      <div style={{
+        height: 160,
+        background: 'linear-gradient(to bottom, transparent 0%, #1c1820 100%)',
+        marginTop: -120,
+        position: 'relative',
+        zIndex: 1,
+        pointerEvents: 'none',
+      }} />
     </div>
   )
 }

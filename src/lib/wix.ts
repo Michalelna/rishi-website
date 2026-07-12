@@ -4,6 +4,7 @@ import { wixEventsV2 as events, rsvp } from '@wix/events'
 import { bookings } from '@wix/bookings'
 import { posts as blog } from '@wix/blog'
 import { plans as pricingPlans } from '@wix/pricing-plans'
+import { posts as forumPosts, categories as forumCategories } from '@wix/forum'
 
 const clientId = import.meta.env.VITE_WIX_CLIENT_ID
 
@@ -15,7 +16,7 @@ if (!clientId) {
 }
 
 export const wixClient = createClient({
-  modules: { members, events, rsvp, bookings, blog, pricingPlans },
+  modules: { members, events, rsvp, bookings, blog, pricingPlans, forumPosts, forumCategories },
   auth: OAuthStrategy({ clientId: clientId ?? '' }),
 })
 

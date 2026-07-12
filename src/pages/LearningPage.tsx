@@ -274,7 +274,7 @@ const sanskritGroups: SanskritGroup[] = [
         tradition: 'Yoga Sutras',
       },
       {
-        file: 'ishwar pranidhana',
+        file: 'ishwar-pranidhana',
         roman: 'Īśvara Praṇidhāna',
         devanagari: 'ईश्वर प्रणिधान',
         translation: 'Surrender to the Divine',
@@ -377,8 +377,126 @@ const sanskritGroups: SanskritGroup[] = [
   },
 ]
 
+function WordCard({
+  word, isActive, isHovered, anyHovered,
+  onActivate, onHover, onHoverEnd,
+  enterDelay,
+}: {
+  word: SanskritWord
+  idx: number
+  isActive: boolean
+  isHovered: boolean
+  anyHovered: boolean
+  onActivate: () => void
+  onHover: () => void
+  onHoverEnd: () => void
+  enterDelay: number
+}) {
+  const dim = anyHovered && !isHovered && !isActive
+
+  const imgFilter = isActive
+    ? 'invert(1) sepia(0.65) saturate(4) brightness(1.05)'
+    : isHovered
+      ? 'invert(1) sepia(0.5) saturate(3) brightness(1)'
+      : 'invert(1) sepia(0.25) saturate(1.4) brightness(0.62)'
+
+  return (
+    <motion.button
+      onClick={onActivate}
+      onHoverStart={onHover}
+      onHoverEnd={onHoverEnd}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: dim ? 0.32 : 1, y: 0 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ delay: enterDelay, duration: 0.45, opacity: { duration: 0.2 } }}
+      style={{
+        position: 'relative',
+        background: isActive ? 'rgba(201,169,110,0.07)' : 'transparent',
+        border: `1px solid ${isActive ? 'rgba(201,169,110,0.45)' : isHovered ? 'rgba(201,169,110,0.2)' : 'rgba(245,240,232,0.05)'}`,
+        cursor: 'pointer',
+        padding: '20px 16px 16px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 0,
+        overflow: 'hidden',
+        transition: 'border-color 0.3s, background 0.3s',
+      } as React.CSSProperties}
+    >
+      {/* Active top accent bar */}
+      <motion.div
+        animate={{ scaleX: isActive ? 1 : 0, opacity: isActive ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        style={{
+          position: 'absolute', top: 0, left: 0, right: 0,
+          height: 2, background: 'rgba(201,169,110,0.7)',
+          transformOrigin: 'left',
+        }}
+      />
+
+      {/* Hover background shimmer */}
+      <motion.div
+        animate={{ opacity: isHovered && !isActive ? 1 : 0 }}
+        transition={{ duration: 0.25 }}
+        style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse at 50% 30%, rgba(201,169,110,0.08) 0%, transparent 70%)',
+        }}
+      />
+
+      {/* Calligraphy image */}
+      <div style={{ height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 10 }}>
+        <motion.img
+          src={`/sanskrit/${word.file}.png`}
+          alt={word.devanagari}
+          animate={{ scale: isActive ? 1.06 : isHovered ? 1.04 : 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+          style={{
+            maxHeight: 72, maxWidth: '100%', objectFit: 'contain',
+            filter: imgFilter,
+            transition: 'filter 0.35s ease',
+          }}
+        />
+      </div>
+
+      {/* Roman name */}
+      <span style={{
+        fontFamily: "'Cormorant Garamond', serif",
+        fontSize: 13,
+        fontWeight: isActive ? 400 : 300,
+        letterSpacing: '0.04em',
+        color: isActive ? 'rgba(245,240,232,0.95)' : isHovered ? 'rgba(245,240,232,0.85)' : 'rgba(245,240,232,0.68)',
+        textAlign: 'center',
+        lineHeight: 1.2,
+        transition: 'color 0.25s',
+        marginBottom: 4,
+      }}>
+        {word.roman}
+      </span>
+
+      {/* Translation — slides in on hover */}
+      <motion.span
+        animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 4 }}
+        transition={{ duration: 0.2 }}
+        style={{
+          fontFamily: "'Raleway', sans-serif",
+          fontSize: 9,
+          fontWeight: 300,
+          letterSpacing: '0.02em',
+          color: 'rgba(201,169,110,0.75)',
+          textAlign: 'center',
+          lineHeight: 1.5,
+        }}
+      >
+        {word.translation}
+      </motion.span>
+    </motion.button>
+  )
+}
+
 function SanskritDictionary() {
   const [active, setActive] = useState<number>(0)
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
 
   let globalIndex = 0
 
@@ -423,7 +541,7 @@ function SanskritDictionary() {
               }}>{group.subtitle}</p>
             </div>
 
-            {/* Thumbnail grid — never reflows */}
+            {/* Thumbnail grid */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
@@ -432,145 +550,139 @@ function SanskritDictionary() {
             }}>
               {group.words.map((word, i) => {
                 const idx = groupStart + i
-                const isActive = active === idx
                 return (
-                  <motion.button
+                  <WordCard
                     key={word.file}
-                    onClick={() => setActive(idx)}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ y: -4, backgroundColor: 'rgba(201,169,110,0.14)' }}
-                    whileTap={{ scale: 0.97 }}
-                    transition={{ delay: i * 0.04, duration: 0.4 }}
-                    style={{
-                      background: isActive ? 'rgba(201,169,110,0.05)' : 'none',
-                      border: `1px solid ${isActive ? 'rgba(201,169,110,0.5)' : 'rgba(245,240,232,0.05)'}`,
-                      cursor: 'pointer',
-                      padding: '20px 16px 16px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: 10,
-                      transition: 'border-color 0.25s, background 0.25s',
-                    } as React.CSSProperties}
-                    onHoverStart={e => {
-                      if (!isActive) (e.currentTarget as HTMLElement).style.borderColor = 'rgba(201,169,110,0.22)'
-                    }}
-                    onHoverEnd={e => {
-                      if (!isActive) (e.currentTarget as HTMLElement).style.borderColor = 'rgba(245,240,232,0.05)'
-                    }}
-                  >
-                    <div style={{ height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-                      <motion.img
-                        src={`/sanskrit/${word.file}.png`}
-                        alt={word.devanagari}
-                        whileHover={{
-                          filter: isActive
-                            ? 'invert(1) sepia(0.6) saturate(3.5) brightness(1)'
-                            : 'invert(1) sepia(0.5) saturate(2.5) brightness(0.95)',
-                        }}
-                        style={{
-                          maxHeight: 72, maxWidth: '100%', objectFit: 'contain',
-                          filter: isActive
-                            ? 'invert(1) sepia(0.6) saturate(3.5) brightness(1)'
-                            : 'invert(1) sepia(0.3) saturate(1.5) brightness(0.7)',
-                          transition: 'filter 0.3s',
-                        }}
-                      />
-                    </div>
-                    <motion.span
-                      whileHover={{ color: isActive ? 'rgba(245,240,232,0.9)' : 'rgba(245,240,232,0.8)' }}
-                      style={{
-                        fontFamily: "'Cormorant Garamond', serif",
-                        fontSize: 13,
-                        fontWeight: isActive ? 400 : 300,
-                        letterSpacing: '0.04em',
-                        color: isActive ? 'rgba(245,240,232,0.9)' : 'rgba(245,240,232,0.72)',
-                        textAlign: 'center',
-                        lineHeight: 1.2,
-                        transition: 'color 0.25s',
-                      }}
-                    >
-                      {word.roman}
-                    </motion.span>
-                  </motion.button>
+                    word={word}
+                    idx={idx}
+                    isActive={active === idx}
+                    isHovered={hoveredIdx === idx}
+                    anyHovered={hoveredIdx !== null}
+                    onActivate={() => setActive(idx)}
+                    onHover={() => setHoveredIdx(idx)}
+                    onHoverEnd={() => setHoveredIdx(null)}
+                    enterDelay={i * 0.04}
+                  />
                 )
               })}
             </div>
 
-            {/* Detail panel — appears below the grid, no reflow */}
+            {/* Detail panel */}
             <AnimatePresence mode="wait">
               {activeWord && (
                 <motion.div
                   key={active}
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  exit={{ opacity: 0, y: -8, transition: { duration: 0.18 } }}
+                  transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1.8fr',
-                    border: '1px solid rgba(201,169,110,0.15)',
-                    background: 'rgba(0,0,0,0.18)',
-                    minHeight: 380,
+                    border: '1px solid rgba(201,169,110,0.18)',
+                    background: 'linear-gradient(135deg, rgba(0,0,0,0.28) 0%, rgba(201,169,110,0.03) 100%)',
+                    minHeight: 480,
+                    overflow: 'hidden',
                   }}
                 >
                   {/* Left: large calligraphy */}
                   <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     padding: '48px 40px',
-                    borderRight: '1px solid rgba(201,169,110,0.16)',
-                    background: 'rgba(0,0,0,0.15)',
+                    borderRight: '1px solid rgba(201,169,110,0.13)',
+                    background: 'rgba(0,0,0,0.18)',
+                    position: 'relative',
+                    overflow: 'hidden',
                   }}>
-                    <img
+                    {/* Ambient glow behind image */}
+                    <div style={{
+                      position: 'absolute', inset: 0, pointerEvents: 'none',
+                      background: 'radial-gradient(ellipse at center, rgba(201,169,110,0.08) 0%, transparent 65%)',
+                    }} />
+                    <motion.img
+                      key={activeWord.file}
                       src={`/sanskrit/${activeWord.file}.png`}
                       alt={activeWord.devanagari}
+                      initial={{ opacity: 0, scale: 0.84 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                       style={{
-                        width: '100%', maxWidth: 300,
+                        width: '100%', maxWidth: 300, position: 'relative', zIndex: 1,
                         filter: 'invert(1) sepia(0.55) saturate(3.2) brightness(0.95)',
                         mixBlendMode: 'screen',
                       }}
                     />
                   </div>
 
-                  {/* Right: definition */}
+                  {/* Right: staggered definition */}
                   <div style={{ padding: '48px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                    <p style={{
-                      fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                      letterSpacing: '0.35em', color: 'rgba(201,169,110,0.6)',
-                      textTransform: 'uppercase', marginBottom: 16,
-                    }}>{activeWord.stage}</p>
+                    <motion.p
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05, duration: 0.35 }}
+                      style={{
+                        fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
+                        letterSpacing: '0.35em', color: 'rgba(201,169,110,0.6)',
+                        textTransform: 'uppercase', marginBottom: 16,
+                      }}
+                    >{activeWord.stage}</motion.p>
 
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 18, marginBottom: 6 }}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1, duration: 0.4 }}
+                      style={{ display: 'flex', alignItems: 'baseline', gap: 24, marginBottom: 8, flexWrap: 'wrap' }}
+                    >
                       <h3 style={{
-                        fontFamily: "'Cormorant Garamond', serif", fontSize: 48, fontWeight: 300,
-                        letterSpacing: '0.04em', color: 'rgba(245,240,232,0.95)', lineHeight: 1,
+                        fontFamily: "'Cormorant Garamond', serif", fontSize: 72, fontWeight: 300,
+                        letterSpacing: '0.02em', color: 'rgba(245,240,232,0.95)', lineHeight: 1,
                       }}>{activeWord.roman}</h3>
                       <span style={{
-                        fontFamily: "'Cormorant Garamond', serif", fontSize: 20, fontWeight: 300,
-                        fontStyle: 'italic', color: 'rgba(245,240,232,0.68)',
+                        fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 300,
+                        fontStyle: 'italic', color: 'rgba(245,240,232,0.4)',
                       }}>{activeWord.devanagari}</span>
-                    </div>
+                    </motion.div>
 
-                    <p style={{
-                      fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
-                      letterSpacing: '0.25em', color: 'rgba(201,169,110,0.7)',
-                      textTransform: 'uppercase', marginBottom: 28,
-                    }}>{activeWord.translation}</p>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.15, duration: 0.35 }}
+                      style={{
+                        fontFamily: "'Raleway', sans-serif", fontSize: 11, fontWeight: 300,
+                        letterSpacing: '0.3em', color: 'rgba(201,169,110,0.75)',
+                        textTransform: 'uppercase', marginBottom: 32,
+                      }}
+                    >{activeWord.translation}</motion.p>
 
-                    <div style={{ width: 36, height: 1, background: 'rgba(201,169,110,0.4)', marginBottom: 28 }} />
+                    {/* Divider line — animates width */}
+                    <motion.div
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: 36, opacity: 1 }}
+                      transition={{ delay: 0.2, duration: 0.45, ease: 'easeOut' }}
+                      style={{ height: 1, background: 'rgba(201,169,110,0.4)', marginBottom: 28 }}
+                    />
 
-                    <p style={{
-                      fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 300,
-                      fontStyle: 'italic', lineHeight: 1.9, color: 'rgba(245,240,232,0.68)',
-                      marginBottom: 28, maxWidth: 500,
-                    }}>{activeWord.meaning}</p>
+                    <motion.p
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.25, duration: 0.45 }}
+                      style={{
+                        fontFamily: "'Cormorant Garamond', serif", fontSize: 20, fontWeight: 300,
+                        fontStyle: 'italic', lineHeight: 1.9, color: 'rgba(245,240,232,0.65)',
+                        marginBottom: 32, maxWidth: 520,
+                      }}
+                    >{activeWord.meaning}</motion.p>
 
-                    <span style={{
-                      fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                      letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.62)',
-                      border: '1px solid rgba(201,169,110,0.15)', padding: '4px 12px', alignSelf: 'flex-start',
-                    }}>{activeWord.tradition}</span>
+                    <motion.span
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.35, duration: 0.35 }}
+                      style={{
+                        fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
+                        letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.62)',
+                        border: '1px solid rgba(201,169,110,0.18)', padding: '4px 12px', alignSelf: 'flex-start',
+                      }}
+                    >{activeWord.tradition}</motion.span>
                   </div>
                 </motion.div>
               )}
@@ -854,7 +966,7 @@ export default function LearningPage() {
             <ChakraBody />
 
             {/* Course grid */}
-            <div style={{ padding: '64px 80px 120px' }}>
+            <div style={{ padding: '64px 80px 60px' }}>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -978,6 +1090,16 @@ export default function LearningPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Bottom gradient fade — softens transition to footer */}
+      <div style={{
+        height: 160,
+        background: 'linear-gradient(to bottom, transparent 0%, #1c1820 100%)',
+        marginTop: -120,
+        position: 'relative',
+        zIndex: 1,
+        pointerEvents: 'none',
+      }} />
     </div>
   )
 }

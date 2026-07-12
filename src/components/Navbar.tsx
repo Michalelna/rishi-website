@@ -1,7 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import RishiLogo from './RishiLogo'
 import MusicModal from './MusicModal'
+import { wixClient } from '../lib/wix'
+
+interface LiveNotification {
+  id: string
+  avatars: string[]
+  text: React.ReactNode
+  time: string
+  image?: string
+}
 
 interface NavbarProps {
   transparent?: boolean
@@ -9,9 +17,56 @@ interface NavbarProps {
   onNavigate?: (page: string) => void
 }
 
+function timeAgo(date: Date): string {
+  const secs = Math.floor((Date.now() - date.getTime()) / 1000)
+  if (secs < 60) return 'just now'
+  if (secs < 3600) return `${Math.floor(secs / 60)}m ago`
+  if (secs < 86400) return `${Math.floor(secs / 3600)}h ago`
+  return `${Math.floor(secs / 86400)}d ago`
+}
+
 export default function Navbar({ transparent = false, onHome, onNavigate }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [musicOpen, setMusicOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [dismissed, setDismissed] = useState<string[]>([])
+  const [notifications, setNotifications] = useState<LiveNotification[]>([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchForumActivity() {
+      setLoading(true)
+      try {
+        const { posts } = await wixClient.forumPosts.queryPosts()
+          .descending('_createdDate')
+          .limit(10)
+          .find()
+
+        const live: LiveNotification[] = (posts ?? []).map(post => {
+          const author = post.owner
+          const name = author?.nickname ?? author?.name ?? 'Someone'
+          const avatar = author?.image?.url ?? ''
+          const created = post._createdDate ? new Date(post._createdDate) : new Date()
+          const excerpt = post.title ?? 'posted a new thread'
+
+          return {
+            id: post._id ?? String(Math.random()),
+            avatars: avatar ? [avatar] : [],
+            text: <><strong>{name}</strong> posted "{excerpt}"</>,
+            time: timeAgo(created),
+          }
+        })
+
+        setNotifications(live)
+      } catch (err) {
+        console.warn('[Rishi] Forum fetch failed:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchForumActivity()
+  }, [])
 
   return (
     <>
@@ -39,9 +94,9 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
         }}
       >
         {/* Left icons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-          <NavIcon label="Notifications">
-            <BellIcon />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 28, position: 'relative' }}>
+          <NavIcon label="Notifications" onClick={() => setNotifOpen(o => !o)} active={notifOpen}>
+            <BellIcon unread={notifications.length > 0 && dismissed.length < notifications.length} />
           </NavIcon>
           <NavIcon label="Music" onClick={() => setMusicOpen(o => !o)} active={musicOpen}>
             <MusicIcon />
@@ -51,13 +106,26 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
           </NavIcon>
         </div>
 
-        {/* Center logo */}
-        <div
-          style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}
+        {/* Center wordmark */}
+        <button
           onClick={onHome}
+          style={{
+            position: 'absolute', left: '50%', transform: 'translateX(-50%)',
+            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+          }}
         >
-          <RishiLogo size={34} variant="navbar" />
-        </div>
+          <span style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: 17,
+            fontWeight: 300,
+            letterSpacing: '0.22em',
+            color: 'rgba(245,240,232,0.92)',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
+          }}>
+            Rishi — Learn Yoga
+          </span>
+        </button>
 
         {/* Right */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
@@ -120,6 +188,166 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
       </motion.nav>
 
       <MusicModal open={musicOpen} onClose={() => setMusicOpen(false)} />
+
+      {/* Notifications panel */}
+      <AnimatePresence>
+        {notifOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setNotifOpen(false)}
+              style={{ position: 'fixed', inset: 0, zIndex: 98 }}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, y: -12, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.97 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                position: 'fixed',
+                top: 'calc(var(--nav-height) + 8px)',
+                left: 32,
+                width: 380,
+                zIndex: 200,
+                background: 'rgba(12,10,9,0.96)',
+                backdropFilter: 'blur(24px)',
+                border: '1px solid rgba(201,169,110,0.18)',
+                borderRadius: 2,
+                overflow: 'hidden',
+              }}
+            >
+              {/* Header */}
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '20px 24px 16px',
+                borderBottom: '1px solid rgba(245,240,232,0.06)',
+              }}>
+                <span style={{
+                  fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
+                  letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.7)',
+                }}>Notifications</span>
+                <button
+                  onClick={() => setDismissed(notifications.map(n => n.id))}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
+                    letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.65)',
+                  }}
+                >Mark all read</button>
+              </div>
+
+              {/* Items */}
+              <div style={{ maxHeight: 480, overflowY: 'auto' }}>
+                {loading && (
+                  <div style={{
+                    padding: '32px 24px', textAlign: 'center',
+                    fontFamily: "'Cormorant Garamond', serif", fontSize: 15, fontWeight: 300,
+                    fontStyle: 'italic', color: 'rgba(245,240,232,0.35)',
+                  }}>Loading…</div>
+                )}
+                <AnimatePresence initial={false}>
+                  {notifications.filter(n => !dismissed.includes(n.id)).map((n, i) => (
+                    <motion.div
+                      key={n.id}
+                      layout
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
+                      transition={{ duration: 0.25, delay: i * 0.04 }}
+                      style={{
+                        display: 'flex', alignItems: 'flex-start', gap: 14,
+                        padding: '18px 24px',
+                        borderBottom: '1px solid rgba(245,240,232,0.04)',
+                        position: 'relative',
+                      }}
+                    >
+                      {/* Avatars */}
+                      <div style={{ display: 'flex', flexShrink: 0, marginTop: 2 }}>
+                        {n.avatars.slice(0, 3).map((src, j) => (
+                          <img
+                            key={j}
+                            src={src}
+                            style={{
+                              width: 36, height: 36, borderRadius: '50%',
+                              objectFit: 'cover',
+                              border: '2px solid rgba(12,10,9,0.9)',
+                              marginLeft: j > 0 ? -10 : 0,
+                            }}
+                          />
+                        ))}
+                      </div>
+
+                      {/* Text */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{
+                          fontFamily: "'Cormorant Garamond', serif", fontSize: 15, fontWeight: 300,
+                          lineHeight: 1.55, color: 'rgba(245,240,232,0.85)', marginBottom: n.image ? 10 : 4,
+                        }}>{n.text}</p>
+                        {n.image && (
+                          <img
+                            src={n.image}
+                            style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 1, display: 'block', marginBottom: 6 }}
+                          />
+                        )}
+                        <span style={{
+                          fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
+                          letterSpacing: '0.15em', color: 'rgba(201,169,110,0.55)',
+                        }}>{n.time}</span>
+                      </div>
+
+                      {/* Dismiss */}
+                      <button
+                        onClick={() => setDismissed(d => [...d, n.id])}
+                        style={{
+                          background: 'none', border: 'none', cursor: 'pointer',
+                          color: 'rgba(245,240,232,0.28)', padding: '2px 4px', flexShrink: 0,
+                          fontSize: 16, lineHeight: 1,
+                          transition: 'color 0.2s',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.7)')}
+                        onMouseLeave={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.28)')}
+                      >×</button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+
+                {!loading && dismissed.length === notifications.length && notifications.length > 0 && (
+                  <div style={{
+                    padding: '32px 24px', textAlign: 'center',
+                    fontFamily: "'Cormorant Garamond', serif", fontSize: 16, fontWeight: 300,
+                    fontStyle: 'italic', color: 'rgba(245,240,232,0.28)',
+                  }}>
+                    You're all caught up
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              {!loading && dismissed.length < notifications.length && (
+                <div style={{
+                  padding: '14px 24px',
+                  borderTop: '1px solid rgba(245,240,232,0.06)',
+                  textAlign: 'center',
+                }}>
+                  <button style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
+                    letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.45)',
+                    transition: 'color 0.2s',
+                  }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.8)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.45)'}
+                  >Show more</button>
+                </div>
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Full-screen menu overlay */}
       <AnimatePresence>
@@ -206,13 +434,22 @@ function NavIcon({ children, label, onClick, active }: {
   )
 }
 
-function BellIcon() {
+function BellIcon({ unread }: { unread?: boolean }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-      <circle cx="18" cy="5" r="3" fill="#c9a96e" stroke="none"/>
-    </svg>
+    <span style={{ position: 'relative', display: 'inline-flex' }}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      {unread && (
+        <span style={{
+          position: 'absolute', top: -2, right: -2,
+          width: 7, height: 7, borderRadius: '50%',
+          background: '#c9a96e',
+          border: '1.5px solid rgba(8,7,6,0.85)',
+        }} />
+      )}
+    </span>
   )
 }
 
