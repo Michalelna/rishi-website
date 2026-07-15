@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary meta -->
-    <title>Rishi — Ancient Wisdom, Modern Practice</title>
+    <title>Rishi Yoga</title>
     <meta name="description" content="Rishi is a yoga and wellness platform offering guided practices, Sanskrit learning, breathwork, meditation, and a mindful community." />
     <meta name="keywords" content="yoga, meditation, breathwork, Sanskrit, wellness, mindfulness, ancient wisdom, pranayama, Rishi" />
     <meta name="author" content="Rishi" />
@@ -15,7 +15,7 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Rishi" />
-    <meta property="og:title" content="Rishi — Ancient Wisdom, Modern Practice" />
+    <meta property="og:title" content="Rishi Yoga" />
     <meta property="og:description" content="Guided yoga practices, Sanskrit learning, breathwork, meditation, and a mindful global community." />
     <meta property="og:url" content="https://rishi-webs-06f30fec-michaleln.wix-site-host.com/" />
     <meta property="og:image" content="https://rishi-webs-06f30fec-michaleln.wix-site-host.com/og-image.jpg" />
@@ -25,7 +25,7 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Rishi — Ancient Wisdom, Modern Practice" />
+    <meta name="twitter:title" content="Rishi Yoga" />
     <meta name="twitter:description" content="Guided yoga practices, Sanskrit learning, breathwork, meditation, and a mindful global community." />
     <meta name="twitter:image" content="https://rishi-webs-06f30fec-michaleln.wix-site-host.com/og-image.jpg" />
 
@@ -64,8 +64,32 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@300;400&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
     <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@300;400&display=swap" rel="stylesheet" /></noscript>
+
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{background:#1c1820;color:#f5f0e8;font-family:Georgia,serif}
+      #splash{display:flex;width:100vw;height:100vh;overflow:hidden}
+      .sp{flex:1;position:relative;overflow:hidden;cursor:pointer}
+      .sp img{width:100%;height:100%;object-fit:cover;filter:brightness(0.55)}
+      .sp-label{position:absolute;bottom:60px;left:0;right:0;text-align:center;font-size:28px;letter-spacing:0.3em;text-transform:uppercase;color:#f5f0e8}
+      @media(max-width:767px){#splash{flex-direction:column}}
+    </style>
   </head>
   <body>
+    <div id="splash" aria-hidden="true">
+      <div class="sp">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=55&fit=crop&fm=webp" alt="Rishi Yoga Community" width="800" height="600" fetchpriority="high" />
+        <div class="sp-label">Community</div>
+      </div>
+      <div class="sp">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=55&fit=crop&fm=webp" alt="Practice" width="800" height="600" fetchpriority="high" />
+        <div class="sp-label">Practice</div>
+      </div>
+      <div class="sp">
+        <img src="https://images.unsplash.com/photo-1473186578172-c141e6798cf4?w=800&q=55&fit=crop&fm=webp" alt="Learning" width="800" height="600" fetchpriority="high" />
+        <div class="sp-label">Learning</div>
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

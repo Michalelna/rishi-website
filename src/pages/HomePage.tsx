@@ -39,17 +39,28 @@ function Symbol({ type, size, hovered }: { type: string; size: number; hovered: 
 
 export default function HomePage() {
   const [hovered, setHovered] = useState<string | null>(null)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 
   return (
-    <div style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+    <div className="home-panels" style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .home-panels { flex-direction: column !important; }
+          .home-panel { flex: 1 !important; min-height: 0 !important; }
+          .home-panel-divider { display: none !important; }
+          .home-panel-label { font-size: 22px !important; letter-spacing: 0.28em !important; }
+          .home-panel-bottom { bottom: 28px !important; }
+        }
+      `}</style>
       {panels.map((panel, i) => {
         const isHovered = hovered === panel.id
         const isOtherHovered = hovered !== null && hovered !== panel.id
-        const flex = isHovered ? 1.6 : isOtherHovered ? 0.7 : 1
+        const flex = isMobile ? 1 : (isHovered ? 1.6 : isOtherHovered ? 0.7 : 1)
 
         return (
           <motion.div
             key={panel.id}
+            className="home-panel"
             onHoverStart={() => setHovered(panel.id)}
             onHoverEnd={() => setHovered(null)}
             animate={{ flex }}
@@ -90,7 +101,7 @@ export default function HomePage() {
 
             {/* Vertical dividers */}
             {i < panels.length - 1 && (
-              <div style={{
+              <div className="home-panel-divider" style={{
                 position: 'absolute',
                 right: 0,
                 top: 0,
@@ -127,6 +138,7 @@ export default function HomePage() {
                 y: isHovered ? -8 : 0,
               }}
               transition={{ duration: 0.5 }}
+              className="home-panel-bottom"
               style={{
                 position: 'absolute',
                 bottom: 60,
@@ -139,7 +151,7 @@ export default function HomePage() {
                 zIndex: 4,
               }}
             >
-              <span style={{
+              <span className="home-panel-label" style={{
                 fontFamily: "'Cormorant Garamond', serif",
                 fontSize: 32,
                 fontWeight: 300,

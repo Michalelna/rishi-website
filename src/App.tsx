@@ -1,13 +1,14 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { AnimatePresence, motion, LayoutGroup } from 'framer-motion'
 import { BrowserRouter, Routes, Route, useNavigate, useLocation, Link } from 'react-router-dom'
 import { useState } from 'react'
 import Navbar from './components/Navbar'
-import LearningPage from './pages/LearningPage'
-import PracticePage from './pages/PracticePage'
-import JournalPage from './pages/JournalPage'
-import CommunityPage from './pages/CommunityPage'
 import { TriangleSymbol, DiamondSymbol, PracticeSymbol } from './components/Symbols'
+
+const LearningPage = lazy(() => import('./pages/LearningPage'))
+const PracticePage = lazy(() => import('./pages/PracticePage'))
+const JournalPage = lazy(() => import('./pages/JournalPage'))
+const CommunityPage = lazy(() => import('./pages/CommunityPage'))
 
 type Page = 'home' | 'learning' | 'practice' | 'journal' | 'community'
 
@@ -21,7 +22,7 @@ const homePanels = [
     id: 'community' as Page,
     label: 'Community',
     sublabel: 'Connect & Grow',
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1200&q=55&fit=crop&fm=webp&crop=focalpoint&fp-x=0.5&fp-y=0.35&fp-z=1',
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=55&fit=crop&fm=webp',
     bgPosition: '50% 35%',
     tint: 'rgba(15,35,20,0.5)',
     symbol: 'triangle',
@@ -228,6 +229,10 @@ function AppInner() {
   const isHome = location.pathname === '/'
 
   useEffect(() => {
+    document.getElementById('splash')?.remove()
+  }, [])
+
+  useEffect(() => {
     const meta = pageMeta[location.pathname] ?? pageMeta['/']
     document.title = meta.title
     document.querySelector('meta[name="description"]')?.setAttribute('content', meta.description)
@@ -249,6 +254,7 @@ function AppInner() {
       />
 
       <main id="main-content" tabIndex={-1} style={{ outline: 'none' }}>
+        <Suspense fallback={null}>
         <AnimatePresence>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={
@@ -293,6 +299,7 @@ function AppInner() {
             } />
           </Routes>
         </AnimatePresence>
+        </Suspense>
       </main>
 
       {!isHome && (
