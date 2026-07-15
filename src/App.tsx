@@ -68,11 +68,11 @@ const pageMeta: Record<string, { title: string; description: string }> = {
   },
 }
 
-function SymbolEl({ type, hovered }: { type: string; hovered: boolean }) {
+function SymbolEl({ type, hovered, mobile }: { type: string; hovered: boolean; mobile?: boolean }) {
   const color = hovered ? 'rgba(201,169,110,0.82)' : 'rgba(245,240,232,0.82)'
-  if (type === 'triangle') return <TriangleSymbol size={200} color={color} isHovered={hovered} />
-  if (type === 'circles')  return <PracticeSymbol size={220} color={color} isHovered={hovered} />
-  if (type === 'diamond')  return <DiamondSymbol size={200} color={color} isHovered={hovered} />
+  if (type === 'triangle') return <TriangleSymbol size={mobile ? 110 : 200} color={color} isHovered={hovered} />
+  if (type === 'circles')  return <PracticeSymbol size={mobile ? 120 : 220} color={color} isHovered={hovered} />
+  if (type === 'diamond')  return <DiamondSymbol size={mobile ? 110 : 200} color={color} isHovered={hovered} />
   return null
 }
 
@@ -82,7 +82,7 @@ function HomePageView() {
   const isMobile = useWindowWidth() < 768
 
   return (
-    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+    <div className="home-panels" style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       {homePanels.map((panel, i) => {
         const isHov = hovered === panel.id
         const isOther = hovered !== null && hovered !== panel.id
@@ -100,6 +100,7 @@ function HomePageView() {
             onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/' + panel.id) } }}
             animate={isMobile ? {} : { flex }}
             transition={{ duration: 0.75, ease: [0.43, 0.13, 0.23, 0.96] }}
+            className="home-panel"
             style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer', flexShrink: 0, height: isMobile ? '33.33vh' : '100vh', flex: isMobile ? undefined : flex }}
           >
             <motion.div
@@ -136,7 +137,7 @@ function HomePageView() {
               transition={SPRING}
               style={{
                 position: 'absolute',
-                top: 0, bottom: 140,
+                top: 0, bottom: isMobile ? 60 : 140,
                 left: 0, right: 0,
                 display: 'flex',
                 alignItems: 'center',
@@ -148,7 +149,7 @@ function HomePageView() {
                 animate={{ opacity: isOther ? 0.15 : 1, scale: isHov ? 1.06 : 1 }}
                 transition={{ duration: 0.5 }}
               >
-                <SymbolEl type={panel.symbol} hovered={isHov} />
+                <SymbolEl type={panel.symbol} hovered={isHov} mobile={isMobile} />
               </motion.div>
             </motion.div>
 

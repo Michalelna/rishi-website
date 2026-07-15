@@ -67,6 +67,32 @@ html, body {
 }
 
 /* 2.3.3 Animation from Interactions — honour reduced-motion preference */
+/* ── Mobile layout helpers ───────────────────────────── */
+@media (max-width: 767px) {
+  .home-panels {
+    flex-direction: column !important;
+  }
+  .nav-left-icons {
+    display: none !important;
+  }
+  .nav-sign-in {
+    display: none !important;
+  }
+  .nav-padding {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .page-padding {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .footer-nav {
+    padding: 24px 20px !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
