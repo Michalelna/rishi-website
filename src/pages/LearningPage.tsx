@@ -5,7 +5,8 @@ import ChakraBody from '../components/ChakraBody'
 
 const subNav = [
   'Sanskrit',
-  'Yoga',
+  'History',
+  'Chakras',
 ]
 
 const courses = [
@@ -699,6 +700,8 @@ export default function LearningPage() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
 
   const isSanskrit = activeNav === 0
+  const isHistory = activeNav === 1
+  const isChakras = activeNav === 2
 
   return (
     <div style={{ background: '#1c1820', minHeight: '100vh' }}>
@@ -881,7 +884,17 @@ export default function LearningPage() {
           >
             <SanskritDictionary />
           </motion.div>
-        ) : (
+        ) : isChakras ? (
+          <motion.div
+            key="chakras"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.4 }}
+          >
+            <ChakraBody />
+          </motion.div>
+        ) : isHistory ? (
           <motion.div
             key="main"
             initial={{ opacity: 0, y: 16 }}
@@ -962,8 +975,6 @@ export default function LearningPage() {
               </div>
             </div>
 
-            {/* Chakra body */}
-            <ChakraBody />
 
             {/* Course grid */}
             <div style={{ padding: '64px 80px 60px' }}>
@@ -1088,7 +1099,7 @@ export default function LearningPage() {
               </div>
             </div>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
 
       {/* Bottom gradient fade — softens transition to footer */}
