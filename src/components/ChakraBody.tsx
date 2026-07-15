@@ -7,7 +7,7 @@ const chakras = [
     sanskrit: 'Sahasrara',
     color: '#a78bfa',
     glow: 'rgba(167,139,250,0.5)',
-    bodyTop: '11%',   // % from top of the body image
+    bodyTop: '12%',   // % from top of the body image — top of head
     desc: 'Pure consciousness. The gateway to divine connection and universal awareness beyond the self.',
     element: 'Thought',
     mantra: 'OM',
@@ -17,7 +17,7 @@ const chakras = [
     sanskrit: 'Ajna',
     color: '#818cf8',
     glow: 'rgba(129,140,248,0.5)',
-    bodyTop: '20%',
+    bodyTop: '24%',  // between eyebrows
     desc: 'Inner vision and intuition. The seat of perception, clarity, and higher knowing.',
     element: 'Light',
     mantra: 'SHAM',
@@ -27,7 +27,7 @@ const chakras = [
     sanskrit: 'Vishuddha',
     color: '#38bdf8',
     glow: 'rgba(56,189,248,0.5)',
-    bodyTop: '29%',
+    bodyTop: '34%',  // throat
     desc: 'Authentic expression. The bridge between heart and mind, voice of truth and creativity.',
     element: 'Space',
     mantra: 'HAM',
@@ -37,7 +37,7 @@ const chakras = [
     sanskrit: 'Anahata',
     color: '#4ade80',
     glow: 'rgba(74,222,128,0.5)',
-    bodyTop: '39%',
+    bodyTop: '46%',  // centre of chest
     desc: 'Unconditional love and compassion. The centre of all energy — where earth and sky meet.',
     element: 'Air',
     mantra: 'YAM',
@@ -47,7 +47,7 @@ const chakras = [
     sanskrit: 'Manipura',
     color: '#fbbf24',
     glow: 'rgba(251,191,36,0.5)',
-    bodyTop: '49%',
+    bodyTop: '58%',  // upper abdomen / solar plexus
     desc: 'Personal power and transformation. The fire of will, confidence, and inner strength.',
     element: 'Fire',
     mantra: 'RAM',
@@ -57,7 +57,7 @@ const chakras = [
     sanskrit: 'Svadhisthana',
     color: '#fb923c',
     glow: 'rgba(251,146,60,0.5)',
-    bodyTop: '58%',
+    bodyTop: '69%',  // lower abdomen / sacral
     desc: 'Creative life force and sensuality. The seat of emotion, pleasure, and fluid movement.',
     element: 'Water',
     mantra: 'VAM',
@@ -67,7 +67,7 @@ const chakras = [
     sanskrit: 'Muladhara',
     color: '#f87171',
     glow: 'rgba(248,113,113,0.5)',
-    bodyTop: '66%',
+    bodyTop: '82%',  // base of spine / top of crossed legs
     desc: 'Foundation and belonging. Grounded in the earth, safe, stable, and present.',
     element: 'Earth',
     mantra: 'LAM',
@@ -91,7 +91,7 @@ export default function ChakraBody() {
           fontSize: 10,
           fontWeight: 300,
           letterSpacing: '0.38em',
-          color: 'rgba(201,169,110,0.8)',
+          color: 'rgba(201,169,110,0.94)',
           textTransform: 'uppercase',
           marginBottom: 14,
         }}>The Energy Body</p>
@@ -114,9 +114,12 @@ export default function ChakraBody() {
           height: BODY_HEIGHT,
           flexShrink: 0,
         }}>
-          {/* Photo */}
+          {/* Dark base */}
+          <div style={{ position: 'absolute', inset: 0, background: '#1c1820' }} />
+
+          {/* Photo — high brightness so the figure reads clearly; multiply removes white bg */}
           <img
-            src="https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=600&q=85&fit=crop&crop=center"
+            src="https://cdn.mos.cms.futurecdn.net/eBKx8m8rFfSPHmaqxfQMWF-1000-80.jpg.webp"
             alt="Meditating figure"
             style={{
               position: 'absolute',
@@ -124,16 +127,55 @@ export default function ChakraBody() {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center top',
-              filter: 'brightness(0.45) saturate(0.6)',
-              borderRadius: 2,
+              objectPosition: 'center center',
+              mixBlendMode: 'multiply',
+              filter: 'contrast(0.95) brightness(3.5) saturate(0.5)',
             }}
           />
+
+          {/* Dramatic rim-light layer — warm gold glow from below */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'radial-gradient(ellipse 60% 40% at 50% 90%, rgba(201,169,110,0.18) 0%, transparent 70%)',
+            mixBlendMode: 'screen',
+          }} />
+
+          {/* Cool top-light */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'radial-gradient(ellipse 50% 30% at 50% 0%, rgba(180,200,255,0.08) 0%, transparent 70%)',
+            mixBlendMode: 'screen',
+          }} />
+
+          {/* Chakra color light — illuminates body in the active chakra's color */}
+          <AnimatePresence>
+            {active !== null && (
+              <motion.div
+                key={active}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: `radial-gradient(ellipse 90% 55% at 50% ${chakras[active].bodyTop}, ${chakras[active].color}55 0%, ${chakras[active].color}22 40%, transparent 70%)`,
+                  mixBlendMode: 'screen',
+                  pointerEvents: 'none',
+                  zIndex: 5,
+                }}
+              />
+            )}
+          </AnimatePresence>
+
           {/* Vignette — fades into page colour at edges */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: 'radial-gradient(ellipse 80% 95% at 50% 42%, transparent 30%, #1c1820 100%)',
+            background: 'radial-gradient(ellipse 70% 90% at 50% 42%, transparent 25%, #1c1820 90%)',
+            zIndex: 6,
           }} />
 
           {/* Spine line */}
@@ -225,18 +267,19 @@ export default function ChakraBody() {
                 style={{
                   position: 'absolute',
                   top: topPx,
-                  left: 0,
+                  left: -170,
                   right: 0,
                   transform: 'translateY(-50%)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 0,
+                  zIndex: 10,
                 }}
               >
-                {/* Horizontal connector line */}
+                {/* Horizontal connector line — spans from body dot to label */}
                 <motion.div
-                  animate={{ width: isActive ? 56 : 32, opacity: isActive ? 0.9 : 0.25 }}
+                  animate={{ width: isActive ? 220 : 185, opacity: isActive ? 0.9 : 0.35 }}
                   transition={{ duration: 0.25 }}
                   style={{
                     height: 1,
@@ -284,7 +327,7 @@ export default function ChakraBody() {
                             fontSize: 13,
                             fontWeight: 300,
                             fontStyle: 'italic',
-                            color: 'rgba(245,240,232,0.45)',
+                            color: 'rgba(245,240,232,0.78)',
                             letterSpacing: '0.05em',
                           }}>{c.sanskrit}</span>
                           <span style={{
@@ -304,7 +347,7 @@ export default function ChakraBody() {
                           fontWeight: 300,
                           fontStyle: 'italic',
                           lineHeight: 1.7,
-                          color: 'rgba(245,240,232,0.55)',
+                          color: 'rgba(245,240,232,0.85)',
                           maxWidth: 360,
                         }}>{c.desc}</p>
                       </motion.div>
@@ -323,7 +366,7 @@ export default function ChakraBody() {
                           fontWeight: 300,
                           letterSpacing: '0.25em',
                           textTransform: 'uppercase',
-                          color: 'rgba(245,240,232,0.35)',
+                          color: 'rgba(245,240,232,0.70)',
                         }}>{c.name}</span>
                         <span style={{
                           fontFamily: "'Cormorant Garamond', serif",

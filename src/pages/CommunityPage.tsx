@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { TriangleSymbol } from '../components/Symbols'
 import EventsSection from '../components/EventsSection'
 import { wixClient } from '../lib/wix'
+import JournalTab from './JournalTab'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -66,7 +67,7 @@ function EventsGallery() {
   return (
     <section style={{ padding: '80px 80px 100px', borderTop: '1px solid rgba(201,169,110,0.14)', background: 'rgba(255,255,255,0.01)' }}>
       <div style={{ marginBottom: 52 }}>
-        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.38em', color: 'rgba(201,169,110,0.82)', textTransform: 'uppercase', marginBottom: 14 }}>Memories</p>
+        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.38em', color: 'rgba(201,169,110,0.95)', textTransform: 'uppercase', marginBottom: 14 }}>Memories</p>
         <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 42, fontWeight: 300, letterSpacing: '0.04em', color: 'rgba(245,240,232,0.88)' }}>Past Gatherings</h2>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'auto auto', gap: 3 }}>
@@ -79,7 +80,7 @@ function EventsGallery() {
               style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(5,4,3,0.85) 0%, transparent 55%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '20px 24px' }}>
               <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 300, color: 'rgba(245,240,232,0.95)', marginBottom: 4 }}>{ev.title}</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.2em', color: 'rgba(201,169,110,0.8)', textTransform: 'uppercase' }}>{ev.date}</span>
+                <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.2em', color: 'rgba(201,169,110,0.94)', textTransform: 'uppercase' }}>{ev.date}</span>
                 <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.82)', textTransform: 'uppercase' }}>{ev.attendees} joined</span>
               </div>
             </motion.div>
@@ -98,9 +99,9 @@ function EventsGallery() {
               <div style={{ padding: '24px 32px', background: 'rgba(10,9,8,0.97)', borderTop: '1px solid rgba(201,169,110,0.2)' }}>
                 <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 300, color: 'rgba(245,240,232,0.92)', marginBottom: 6 }}>{PAST_EVENTS[lightbox].title}</p>
                 <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
-                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.2em', color: 'rgba(201,169,110,0.75)', textTransform: 'uppercase' }}>{PAST_EVENTS[lightbox].date}</span>
-                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.76)', textTransform: 'uppercase' }}>{PAST_EVENTS[lightbox].location}</span>
-                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.68)', textTransform: 'uppercase' }}>{PAST_EVENTS[lightbox].attendees} joined</span>
+                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.2em', color: 'rgba(201,169,110,0.92)', textTransform: 'uppercase' }}>{PAST_EVENTS[lightbox].date}</span>
+                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.92)', textTransform: 'uppercase' }}>{PAST_EVENTS[lightbox].location}</span>
+                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.90)', textTransform: 'uppercase' }}>{PAST_EVENTS[lightbox].attendees} joined</span>
                 </div>
               </div>
               {lightbox > 0 && <button onClick={e => { e.stopPropagation(); setLightbox(lightbox - 1) }} style={{ position: 'absolute', left: -56, top: '40%', background: 'none', border: '1px solid rgba(245,240,232,0.15)', cursor: 'pointer', color: 'rgba(245,240,232,0.82)', width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>‹</button>}
@@ -115,9 +116,12 @@ function EventsGallery() {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
+const SUB_NAV = ['Forum', 'Journal']
+
 export default function CommunityPage() {
+  const [activeTab, setActiveTab] = useState(0)
   const [categories, setCategories] = useState<ForumCategory[]>([{ id: 'all', label: 'All' }])
-  const [activeCategory, setActiveCategory] = useState('all')
+  const [activeCategory] = useState('all')
   const [posts, setPosts] = useState<ForumPost[]>([])
   const [loading, setLoading] = useState(true)
   const [composing, setComposing] = useState(false)
@@ -247,41 +251,44 @@ export default function CommunityPage() {
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }}
           style={{ position: 'absolute', bottom: 48, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 2 }}>
-          <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 11, fontWeight: 300, letterSpacing: '0.35em', color: 'rgba(201,169,110,0.7)', textTransform: 'uppercase' }}>Connect · Share · Grow</span>
+          <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 11, fontWeight: 300, letterSpacing: '0.35em', color: 'rgba(201,169,110,0.90)', textTransform: 'uppercase' }}>Connect · Share · Grow</span>
           <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 48, fontWeight: 300, letterSpacing: '0.1em', color: 'var(--white)' }}>The Gathering</h2>
         </motion.div>
       </div>
 
       <EventsSection />
 
+      {/* Sub-nav */}
+      <div style={{ display: 'flex', borderBottom: '1px solid rgba(201,169,110,0.14)', padding: '0 80px' }}>
+        {SUB_NAV.map((tab, i) => {
+          const isActive = activeTab === i
+          return (
+            <button key={tab} onClick={() => setActiveTab(i)}
+              style={{ background: 'none', border: 'none', borderBottom: isActive ? '2px solid rgba(201,169,110,0.7)' : '2px solid transparent', cursor: 'pointer', padding: '22px 28px', fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: isActive ? 400 : 300, letterSpacing: '0.28em', textTransform: 'uppercase', color: isActive ? 'rgba(201,169,110,0.9)' : 'rgba(245,240,232,0.45)', whiteSpace: 'nowrap', transition: 'color 0.2s' }}>
+              {tab}
+            </button>
+          )
+        })}
+      </div>
+
+      {activeTab === 1 ? (
+        <JournalTab />
+      ) : (<>
+
       {/* Share button */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '24px 80px', borderBottom: '1px solid rgba(201,169,110,0.14)' }}>
         <motion.button whileHover={{ scale: 1.02, borderColor: 'rgba(201,169,110,0.6)' }} whileTap={{ scale: 0.97 }} onClick={() => setComposing(true)}
           style={{ background: 'none', border: '1px solid rgba(201,169,110,0.5)', cursor: 'pointer', padding: '14px 32px', display: 'flex', alignItems: 'center', gap: 12 }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,0.8)" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
-          <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.28em', color: 'rgba(201,169,110,0.8)', textTransform: 'uppercase' }}>Share a thought</span>
+          <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.28em', color: 'rgba(201,169,110,0.94)', textTransform: 'uppercase' }}>Share a thought</span>
         </motion.button>
-      </div>
-
-      {/* Category filter */}
-      <div style={{ padding: '0 80px', borderBottom: '1px solid rgba(201,169,110,0.14)', display: 'flex', overflowX: 'auto' }}>
-        {categories.map(cat => {
-          const active = cat.id === activeCategory
-          const col = categoryColor(cat.label)
-          return (
-            <button key={cat.id} onClick={() => setActiveCategory(cat.id)}
-              style={{ background: 'none', border: 'none', borderBottom: active ? `2px solid ${col}` : '2px solid transparent', cursor: 'pointer', padding: '20px 22px', fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: active ? 400 : 300, letterSpacing: '0.22em', textTransform: 'uppercase', color: active ? col : 'rgba(245,240,232,0.68)', whiteSpace: 'nowrap', flexShrink: 0, transition: 'color 0.2s' }}>
-              {cat.label}
-            </button>
-          )
-        })}
       </div>
 
       {/* Post feed */}
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 40px 60px' }}>
         {loading && (
           <div style={{ padding: '80px 0', textAlign: 'center' }}>
-            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 300, fontStyle: 'italic', color: 'rgba(245,240,232,0.3)' }}>Loading…</p>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, fontWeight: 300, fontStyle: 'italic', color: 'rgba(245,240,232,0.89)' }}>Loading…</p>
           </div>
         )}
 
@@ -298,13 +305,13 @@ export default function CommunityPage() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 17, fontWeight: 400, color: 'rgba(245,240,232,0.9)', marginBottom: 2 }}>{post.author}</p>
-                    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.2em', color: 'rgba(201,169,110,0.7)', textTransform: 'uppercase' }}>{post.role}</p>
+                    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.2em', color: 'rgba(201,169,110,0.90)', textTransform: 'uppercase' }}>{post.role}</p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     {post.category !== 'General' && (
                       <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 8, fontWeight: 300, letterSpacing: '0.2em', textTransform: 'uppercase', color: catColor, border: `1px solid ${catColor}44`, padding: '3px 10px' }}>{post.category}</span>
                     )}
-                    <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(245,240,232,0.68)' }}>{post.time}</span>
+                    <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(245,240,232,0.90)' }}>{post.time}</span>
                   </div>
                 </div>
 
@@ -313,7 +320,7 @@ export default function CommunityPage() {
                   <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 400, letterSpacing: '0.02em', color: 'rgba(245,240,232,0.92)', marginBottom: 10 }}>{post.title}</p>
                 )}
                 {post.content && (
-                  <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 19, fontWeight: 300, fontStyle: 'italic', lineHeight: 1.75, color: 'rgba(245,240,232,0.72)', letterSpacing: '0.02em', marginBottom: 26 }}>{post.content}</p>
+                  <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 19, fontWeight: 300, fontStyle: 'italic', lineHeight: 1.75, color: 'rgba(245,240,232,0.91)', letterSpacing: '0.02em', marginBottom: 26 }}>{post.content}</p>
                 )}
 
                 {/* Actions */}
@@ -331,7 +338,7 @@ export default function CommunityPage() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(245,240,232,0.52)" strokeWidth="1.5" strokeLinecap="round">
                       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                     </svg>
-                    <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(245,240,232,0.52)' }}>{post.comments}</span>
+                    <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(245,240,232,0.84)' }}>{post.comments}</span>
                   </button>
 
                   <button style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, padding: 0, marginLeft: 'auto' }}>
@@ -348,7 +355,7 @@ export default function CommunityPage() {
 
         {!loading && visible.length === 0 && (
           <div style={{ padding: '80px 0', textAlign: 'center' }}>
-            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 300, fontStyle: 'italic', color: 'rgba(245,240,232,0.72)' }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 300, fontStyle: 'italic', color: 'rgba(245,240,232,0.91)' }}>
               No posts yet in this category.
             </p>
           </div>
@@ -357,19 +364,22 @@ export default function CommunityPage() {
 
       <EventsGallery />
 
+      </>)}
+
       {/* Compose modal */}
       <AnimatePresence>
         {composing && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setComposing(false)}
               style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(5,5,4,0.82)', backdropFilter: 'blur(10px)' }} />
+            <div style={{ position: 'fixed', inset: 0, zIndex: 301, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
             <motion.div role="dialog" aria-modal="true" aria-label="Share a thought"
-              initial={{ opacity: 0, y: 24, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.97 }}
+              initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.32, ease: [0.25, 0.46, 0.45, 0.94] }}
-              style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 301, width: 560, background: 'rgba(10,9,8,0.99)', border: '1px solid rgba(201,169,110,0.15)', boxShadow: '0 40px 100px rgba(0,0,0,0.85)', padding: '40px' }}>
+              style={{ pointerEvents: 'all', width: 560, background: 'rgba(10,9,8,0.99)', border: '1px solid rgba(201,169,110,0.15)', boxShadow: '0 40px 100px rgba(0,0,0,0.85)', padding: '40px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
                 <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 300, color: 'rgba(245,240,232,0.9)' }}>Share a thought</h2>
-                <button onClick={() => setComposing(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(245,240,232,0.52)', fontSize: 22, lineHeight: 1, padding: 4 }}>×</button>
+                <button onClick={() => setComposing(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(245,240,232,0.84)', fontSize: 22, lineHeight: 1, padding: 4 }}>×</button>
               </div>
 
               {/* Category selector (real categories) */}
@@ -397,7 +407,7 @@ export default function CommunityPage() {
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 14, marginTop: 20 }}>
                 <button onClick={() => setComposing(false)}
-                  style={{ background: 'none', border: '1px solid rgba(245,240,232,0.1)', cursor: 'pointer', padding: '10px 24px', fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.58)' }}>
+                  style={{ background: 'none', border: '1px solid rgba(245,240,232,0.1)', cursor: 'pointer', padding: '10px 24px', fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.86)' }}>
                   Cancel
                 </button>
                 <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} onClick={submitPost} disabled={submitting || (!draftText.trim() && !draftTitle.trim())}
@@ -406,6 +416,7 @@ export default function CommunityPage() {
                 </motion.button>
               </div>
             </motion.div>
+            </div>
           </>
         )}
       </AnimatePresence>

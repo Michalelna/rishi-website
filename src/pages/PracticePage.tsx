@@ -10,6 +10,7 @@ const practices = [
     type: 'Movement',
     image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=600&q=55&fit=crop&fm=webp',
     color: 'rgba(40,80,100,0.6)',
+    youtubeId: 'zikhedytKNs',
   },
   {
     title: 'Deep Breathwork',
@@ -18,6 +19,7 @@ const practices = [
     type: 'Breath',
     image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=55&fit=crop&fm=webp',
     color: 'rgba(20,40,70,0.6)',
+    youtubeId: 'lEzaFx8k7Ew',
   },
   {
     title: 'Chakra Meditation',
@@ -26,11 +28,27 @@ const practices = [
     type: 'Meditation',
     image: 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?w=600&q=55&fit=crop&fm=webp',
     color: 'rgba(60,20,60,0.6)',
+    youtubeId: 'q5SlAt7j90g',
   },
 ]
 
 export default function PracticePage() {
-  const [active, setActive] = useState(1)
+  const [active, setActive] = useState<number | null>(null)
+  const [playing, setPlaying] = useState<number | null>(null)
+
+  function handleClick(i: number) {
+    if (active === i) {
+      setPlaying(i)
+    } else {
+      setActive(i)
+      setPlaying(null)
+    }
+  }
+
+  function handlePlay(i: number, e: React.MouseEvent) {
+    e.stopPropagation()
+    setPlaying(i)
+  }
 
   return (
     <div style={{ background: '#1c1820', minHeight: '100vh' }}>
@@ -79,18 +97,11 @@ export default function PracticePage() {
           PRACTICE
         </motion.h1>
 
-        {/* Large symbol pinned to top-right */}
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2, duration: 1.6, ease: 'easeOut' }}
-          style={{
-            position: 'absolute',
-            top: -80,
-            right: -80,
-            zIndex: 2,
-            pointerEvents: 'none',
-          }}
+          style={{ position: 'absolute', top: -80, right: -80, zIndex: 2, pointerEvents: 'none' }}
         >
           <PracticeSymbol size={580} color="rgba(245,240,232,0.18)" />
         </motion.div>
@@ -99,54 +110,27 @@ export default function PracticePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8 }}
-          style={{
-            position: 'absolute',
-            bottom: 48,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 8,
-            zIndex: 2,
-          }}
+          style={{ position: 'absolute', bottom: 48, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 2 }}
         >
-          <span style={{
-            fontFamily: "'Raleway', sans-serif",
-            fontSize: 11,
-            fontWeight: 300,
-            letterSpacing: '0.35em',
-            color: 'rgba(201,169,110,0.7)',
-            textTransform: 'uppercase',
-          }}>
+          <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 11, fontWeight: 300, letterSpacing: '0.35em', color: 'rgba(201,169,110,0.90)', textTransform: 'uppercase' }}>
             Move · Breathe · Be
           </span>
-          <h2 style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: 48,
-            fontWeight: 300,
-            letterSpacing: '0.1em',
-            color: 'var(--white)',
-          }}>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 48, fontWeight: 300, letterSpacing: '0.1em', color: 'var(--white)' }}>
             Practice
           </h2>
         </motion.div>
       </div>
 
-      {/* Practice selector */}
+      {/* Practice list */}
       <div style={{ padding: '80px 80px 60px' }}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          maxWidth: 900,
-          margin: '0 auto',
-        }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 900, margin: '0 auto' }}>
           {practices.map((p, i) => (
             <motion.div
               key={p.title}
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.15 + 0.4 }}
-              onClick={() => setActive(i)}
+              onClick={() => handleClick(i)}
               style={{
                 position: 'relative',
                 overflow: 'hidden',
@@ -156,104 +140,44 @@ export default function PracticePage() {
                 transition: 'border-color 0.3s ease',
               }}
             >
+              {/* Background image when active */}
               <AnimatePresence>
-                {active === i && (
+                {active === i && playing !== i && (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      backgroundImage: `url(${p.image})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                    }}
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    style={{ position: 'absolute', inset: 0, backgroundImage: `url(${p.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
                   />
                 )}
               </AnimatePresence>
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: active === i ? p.color : 'rgba(10,10,10,0.9)',
-                transition: 'background 0.5s ease',
-              }} />
+              <div style={{ position: 'absolute', inset: 0, background: active === i ? p.color : 'rgba(10,10,10,0.9)', transition: 'background 0.5s ease' }} />
 
-              <div style={{
-                position: 'relative',
-                zIndex: 2,
-                padding: '32px 40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
+              {/* Row */}
+              <div style={{ position: 'relative', zIndex: 2, padding: '32px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-                  <span style={{
-                    fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: 48,
-                    fontWeight: 300,
-                    color: active === i ? 'rgba(245,240,232,0.15)' : 'rgba(245,240,232,0.06)',
-                    lineHeight: 1,
-                    minWidth: 40,
-                    transition: 'color 0.3s',
-                  }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 48, fontWeight: 300, color: active === i ? 'rgba(245,240,232,0.15)' : 'rgba(245,240,232,0.06)', lineHeight: 1, minWidth: 40, transition: 'color 0.3s' }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div>
-                    <h3 style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontSize: 28,
-                      fontWeight: 400,
-                      letterSpacing: '0.05em',
-                      color: active === i ? 'var(--white)' : 'rgba(245,240,232,0.95)',
-                      marginBottom: 4,
-                      transition: 'color 0.3s',
-                    }}>
+                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 400, letterSpacing: '0.05em', color: active === i ? 'var(--white)' : 'rgba(245,240,232,0.95)', marginBottom: 4, transition: 'color 0.3s' }}>
                       {p.title}
                     </h3>
-                    <p style={{
-                      fontFamily: "'Raleway', sans-serif",
-                      fontSize: 11,
-                      fontWeight: 300,
-                      letterSpacing: '0.2em',
-                      color: active === i ? 'rgba(201,169,110,0.8)' : 'rgba(245,240,232,0.72)',
-                      textTransform: 'uppercase',
-                      transition: 'color 0.3s',
-                    }}>
+                    <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 11, fontWeight: 300, letterSpacing: '0.2em', color: active === i ? 'rgba(201,169,110,0.8)' : 'rgba(245,240,232,0.72)', textTransform: 'uppercase', transition: 'color 0.3s' }}>
                       {p.subtitle}
                     </p>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-                  <span style={{
-                    fontFamily: "'Raleway', sans-serif",
-                    fontSize: 10,
-                    fontWeight: 300,
-                    letterSpacing: '0.2em',
-                    color: active === i ? 'rgba(201,169,110,0.7)' : 'rgba(245,240,232,0.72)',
-                    textTransform: 'uppercase',
-                    transition: 'color 0.3s',
-                  }}>
+                  <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.2em', color: active === i ? 'rgba(201,169,110,0.7)' : 'rgba(245,240,232,0.72)', textTransform: 'uppercase', transition: 'color 0.3s' }}>
                     {p.type} · {p.duration}
                   </span>
                   <AnimatePresence>
-                    {active === i && (
+                    {active === i && playing !== i && (
                       <motion.button
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.8 }}
-                        style={{
-                          width: 44,
-                          height: 44,
-                          borderRadius: '50%',
-                          border: '1px solid rgba(201,169,110,0.5)',
-                          background: 'rgba(201,169,110,0.2)',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'var(--gold-light)',
-                        }}
+                        onClick={e => handlePlay(i, e)}
+                        style={{ width: 44, height: 44, borderRadius: '50%', border: '1px solid rgba(201,169,110,0.5)', background: 'rgba(201,169,110,0.2)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold-light)' }}
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                           <polygon points="5 3 19 12 5 21 5 3"/>
@@ -263,19 +187,40 @@ export default function PracticePage() {
                   </AnimatePresence>
                 </div>
               </div>
+
+              {/* YouTube embed — expands below the row when playing */}
+              <AnimatePresence>
+                {playing === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 480, opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    style={{ overflow: 'hidden', position: 'relative', zIndex: 2 }}
+                  >
+                    <iframe
+                      src={`https://www.youtube.com/embed/${p.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      style={{ width: '100%', height: 480, border: 'none', display: 'block' }}
+                      title={p.title}
+                    />
+                    {/* Close strip */}
+                    <button
+                      onClick={e => { e.stopPropagation(); setPlaying(null) }}
+                      style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(245,240,232,0.15)', borderRadius: 2, cursor: 'pointer', color: 'rgba(245,240,232,0.90)', padding: '4px 12px', fontFamily: "'Raleway', sans-serif", fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase' }}
+                    >
+                      Close
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           ))}
         </div>
       </div>
-      {/* Bottom gradient fade */}
-      <div style={{
-        height: 160,
-        background: 'linear-gradient(to bottom, transparent 0%, #1c1820 100%)',
-        marginTop: -120,
-        position: 'relative',
-        zIndex: 1,
-        pointerEvents: 'none',
-      }} />
+
+      <div style={{ height: 160, background: 'linear-gradient(to bottom, transparent 0%, #1c1820 100%)', marginTop: -120, position: 'relative', zIndex: 1, pointerEvents: 'none' }} />
     </div>
   )
 }

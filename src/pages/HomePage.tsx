@@ -212,7 +212,7 @@ export default function HomePage() {
                     fontSize: 10,
                     fontWeight: 300,
                     letterSpacing: '0.3em',
-                    color: 'rgba(201,169,110,0.75)',
+                    color: 'rgba(201,169,110,0.92)',
                     textTransform: 'uppercase',
                     whiteSpace: 'nowrap',
                   }}>

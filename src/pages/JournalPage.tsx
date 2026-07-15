@@ -71,7 +71,7 @@ export default function JournalPage() {
             fontSize: 10,
             fontWeight: 300,
             letterSpacing: '0.4em',
-            color: 'rgba(201,169,110,0.6)',
+            color: 'rgba(201,169,110,0.86)',
             textTransform: 'uppercase',
             marginBottom: 12,
           }}>
@@ -127,7 +127,7 @@ export default function JournalPage() {
             fontSize: 10,
             fontWeight: 300,
             letterSpacing: '0.3em',
-            color: 'rgba(245,240,232,0.72)',
+            color: 'rgba(245,240,232,0.91)',
             textTransform: 'uppercase',
             transition: 'all 0.3s',
             display: 'flex',
@@ -168,7 +168,7 @@ export default function JournalPage() {
                 fontSize: 10,
                 fontWeight: 300,
                 letterSpacing: '0.25em',
-                color: 'rgba(201,169,110,0.6)',
+                color: 'rgba(201,169,110,0.86)',
                 textTransform: 'uppercase',
               }}>
                 {entry.day}
@@ -179,7 +179,7 @@ export default function JournalPage() {
                 fontSize: 10,
                 fontWeight: 300,
                 letterSpacing: '0.15em',
-                color: 'rgba(245,240,232,0.76)',
+                color: 'rgba(245,240,232,0.92)',
               }}>
                 {entry.date}
               </span>

@@ -134,7 +134,7 @@ export default function EventsSection() {
           <div>
             <span style={{
               fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
-              letterSpacing: '0.35em', color: 'rgba(201,169,110,0.7)', textTransform: 'uppercase',
+              letterSpacing: '0.35em', color: 'rgba(201,169,110,0.90)', textTransform: 'uppercase',
               display: 'block', marginBottom: 10,
             }}>Gatherings</span>
             <h2 style={{
@@ -200,7 +200,7 @@ export default function EventsSection() {
                       }}>{day}</div>
                       <div style={{
                         fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                        letterSpacing: '0.3em', color: 'rgba(201,169,110,0.7)', textTransform: 'uppercase', marginTop: 4,
+                        letterSpacing: '0.3em', color: 'rgba(201,169,110,0.90)', textTransform: 'uppercase', marginTop: 4,
                       }}>{month}</div>
                     </div>
 
@@ -214,12 +214,12 @@ export default function EventsSection() {
                       <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
                         <span style={{
                           fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
-                          letterSpacing: '0.2em', color: 'rgba(201,169,110,0.65)', textTransform: 'uppercase',
+                          letterSpacing: '0.2em', color: 'rgba(201,169,110,0.88)', textTransform: 'uppercase',
                         }}>{time}</span>
                         {locationName && (
                           <span style={{
                             fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
-                            letterSpacing: '0.2em', color: 'rgba(245,240,232,0.4)', textTransform: 'uppercase',
+                            letterSpacing: '0.2em', color: 'rgba(245,240,232,0.74)', textTransform: 'uppercase',
                           }}>{locationName}</span>
                         )}
                         {isFull && (
@@ -292,7 +292,7 @@ export default function EventsSection() {
                 <button onClick={closeModal} style={{
                   position: 'absolute', top: 20, right: 20,
                   background: 'none', border: 'none', cursor: 'pointer',
-                  color: 'rgba(245,240,232,0.4)', fontSize: 20, lineHeight: 1, padding: 4,
+                  color: 'rgba(245,240,232,0.74)', fontSize: 20, lineHeight: 1, padding: 4,
                 }}>×</button>
 
                 <AnimatePresence mode="wait">
@@ -309,7 +309,7 @@ export default function EventsSection() {
                       }}>You're in</h3>
                       <p style={{
                         fontFamily: "'Raleway', sans-serif", fontSize: 12, fontWeight: 300,
-                        letterSpacing: '0.15em', color: 'rgba(245,240,232,0.55)', lineHeight: 1.7,
+                        letterSpacing: '0.15em', color: 'rgba(245,240,232,0.85)', lineHeight: 1.7,
                       }}>
                         A confirmation will be sent to<br />{form.email}
                       </p>
@@ -319,7 +319,7 @@ export default function EventsSection() {
                       <div style={{ marginBottom: 32 }}>
                         <span style={{
                           fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                          letterSpacing: '0.35em', color: 'rgba(201,169,110,0.6)', textTransform: 'uppercase',
+                          letterSpacing: '0.35em', color: 'rgba(201,169,110,0.86)', textTransform: 'uppercase',
                           display: 'block', marginBottom: 10,
                         }}>RSVP</span>
                         <h3 style={{
@@ -420,5 +420,5 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-  letterSpacing: '0.3em', color: 'rgba(245,240,232,0.4)', textTransform: 'uppercase',
+  letterSpacing: '0.3em', color: 'rgba(245,240,232,0.74)', textTransform: 'uppercase',
 }

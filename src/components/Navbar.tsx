@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import MusicModal from './MusicModal'
+import AuthModal from './AuthModal'
 import { wixClient } from '../lib/wix'
+import { useAuth } from '../lib/auth'
 
 interface LiveNotification {
   id: string
@@ -26,12 +28,37 @@ function timeAgo(date: Date): string {
 }
 
 export default function Navbar({ transparent = false, onHome, onNavigate }: NavbarProps) {
+  const { member, logout } = useAuth()
+
   const [menuOpen, setMenuOpen] = useState(false)
   const [musicOpen, setMusicOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [dismissed, setDismissed] = useState<string[]>([])
   const [notifications, setNotifications] = useState<LiveNotification[]>([])
   const [loading, setLoading] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const searchItems = [
+    { label: 'Home', page: 'home', keywords: ['home', 'welcome', 'start'] },
+    { label: 'Practice', page: 'practice', keywords: ['practice', 'yoga', 'asana', 'poses', 'flow'] },
+    { label: 'Learning — Sanskrit', page: 'learning', keywords: ['sanskrit', 'language', 'learn', 'alphabet'] },
+    { label: 'Learning — History', page: 'learning', keywords: ['history', 'ancient', 'tradition', 'origins'] },
+    { label: 'Learning — Chakras', page: 'learning', keywords: ['chakra', 'energy', 'body', 'sahasrara', 'ajna', 'throat', 'heart'] },
+    { label: 'Community', page: 'community', keywords: ['community', 'forum', 'post', 'people', 'connect'] },
+    { label: 'Community — Journal', page: 'community', keywords: ['journal', 'reflection', 'diary', 'entry', 'personal', 'mood', 'practice log'] },
+    { label: 'Sound Bath', page: 'practice', keywords: ['sound', 'bath', 'music', 'meditation', 'tone', 'frequency'] },
+    { label: 'Breathwork', page: 'practice', keywords: ['breath', 'pranayama', 'breathing', 'inhale', 'exhale'] },
+  ]
+
+  const filteredItems = searchQuery.trim().length > 0
+    ? searchItems.filter(item =>
+        item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.keywords.some(k => k.includes(searchQuery.toLowerCase()))
+      )
+    : []
 
   useEffect(() => {
     async function fetchForumActivity() {
@@ -102,7 +129,7 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
           <NavIcon label="Music" onClick={() => setMusicOpen(o => !o)} active={musicOpen}>
             <MusicIcon />
           </NavIcon>
-          <NavIcon label="Search">
+          <NavIcon label="Search" onClick={() => { setSearchOpen(o => !o); setSearchQuery('') }} active={searchOpen}>
             <SearchIcon />
           </NavIcon>
         </div>
@@ -130,31 +157,29 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
 
         {/* Right */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
-            <span style={{
-              fontFamily: "'Raleway', sans-serif",
-              fontSize: 13,
-              fontWeight: 200,
-              letterSpacing: '0.12em',
-              color: 'rgba(245,240,232,0.9)',
-            }}>
-              Hello, Gaia
-            </span>
-            <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: '50%',
-              overflow: 'hidden',
-              border: '1px solid rgba(201,169,110,0.4)',
-              flexShrink: 0,
-            }}>
-              <img
-                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face"
-                alt="User"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
+          {/* Member / Login */}
+          {member ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 30, height: 30, borderRadius: '50%', overflow: 'hidden', border: '1px solid rgba(201,169,110,0.4)', flexShrink: 0, background: 'rgba(201,169,110,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {member.photoUrl
+                  ? <img src={member.photoUrl} alt={member.nickname} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 11, color: 'rgba(201,169,110,0.9)', textTransform: 'uppercase' }}>{member.nickname[0]}</span>
+                }
+              </div>
+              <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 12, fontWeight: 200, letterSpacing: '0.1em', color: 'rgba(245,240,232,0.92)' }}>{member.nickname}</span>
+              <button onClick={logout} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.88)', padding: 0 }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.6)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.28)')}>
+                Sign out
+              </button>
             </div>
-          </div>
+          ) : (
+            <button onClick={() => setAuthOpen(true)} style={{ background: 'none', border: '1px solid rgba(201,169,110,0.3)', cursor: 'pointer', padding: '7px 18px', fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.92)', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(201,169,110,0.7)'; e.currentTarget.style.color = 'rgba(201,169,110,1)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(201,169,110,0.3)'; e.currentTarget.style.color = 'rgba(201,169,110,0.75)' }}>
+              Sign in
+            </button>
+          )}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             style={{
@@ -189,6 +214,137 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
       </motion.nav>
 
       <MusicModal open={musicOpen} onClose={() => setMusicOpen(false)} />
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+
+      {/* Search overlay */}
+      <AnimatePresence>
+        {searchOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSearchOpen(false)}
+              style={{ position: 'fixed', inset: 0, zIndex: 98 }}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              onAnimationComplete={() => searchInputRef.current?.focus()}
+              style={{
+                position: 'fixed',
+                top: 'calc(var(--nav-height) + 8px)',
+                left: 32,
+                width: 360,
+                zIndex: 200,
+                background: 'rgba(12,10,9,0.96)',
+                backdropFilter: 'blur(24px)',
+                border: '1px solid rgba(201,169,110,0.18)',
+                borderRadius: 2,
+                overflow: 'hidden',
+              }}
+            >
+              {/* Input row */}
+              <div style={{ display: 'flex', alignItems: 'center', padding: '14px 18px', gap: 12, borderBottom: '1px solid rgba(245,240,232,0.06)' }}>
+                <SearchIcon />
+                <input
+                  ref={searchInputRef}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Search…"
+                  autoFocus
+                  style={{
+                    flex: 1,
+                    background: 'none',
+                    border: 'none',
+                    outline: 'none',
+                    fontFamily: "'Raleway', sans-serif",
+                    fontSize: 13,
+                    fontWeight: 300,
+                    letterSpacing: '0.08em',
+                    color: 'rgba(245,240,232,0.9)',
+                  }}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(245,240,232,0.70)', fontSize: 16, lineHeight: 1, padding: 0 }}
+                  >×</button>
+                )}
+              </div>
+
+              {/* Results */}
+              {filteredItems.length > 0 && (
+                <div>
+                  {filteredItems.map((item, i) => (
+                    <motion.button
+                      key={i}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.03 }}
+                      onClick={() => {
+                        setSearchOpen(false)
+                        setSearchQuery('')
+                        if (item.page === 'home') onHome?.()
+                        else onNavigate?.(item.page)
+                      }}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '13px 18px',
+                        background: 'none',
+                        border: 'none',
+                        borderBottom: '1px solid rgba(245,240,232,0.04)',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontSize: 16,
+                        fontWeight: 300,
+                        color: 'rgba(245,240,232,0.92)',
+                        transition: 'color 0.15s, background 0.15s',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.color = 'rgba(201,169,110,0.9)'
+                        e.currentTarget.style.background = 'rgba(201,169,110,0.04)'
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.color = 'rgba(245,240,232,0.75)'
+                        e.currentTarget.style.background = 'none'
+                      }}
+                    >
+                      {item.label}
+                    </motion.button>
+                  ))}
+                </div>
+              )}
+
+              {searchQuery.trim().length > 0 && filteredItems.length === 0 && (
+                <div style={{
+                  padding: '24px 18px',
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 15,
+                  fontWeight: 300,
+                  fontStyle: 'italic',
+                  color: 'rgba(245,240,232,0.89)',
+                }}>No results for "{searchQuery}"</div>
+              )}
+
+              {searchQuery.trim().length === 0 && (
+                <div style={{
+                  padding: '24px 18px',
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 15,
+                  fontWeight: 300,
+                  fontStyle: 'italic',
+                  color: 'rgba(245,240,232,0.60)',
+                }}>Try: chakras, breathwork, sanskrit…</div>
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Notifications panel */}
       <AnimatePresence>
@@ -229,14 +385,14 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
               }}>
                 <span style={{
                   fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
-                  letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.7)',
+                  letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.90)',
                 }}>Notifications</span>
                 <button
                   onClick={() => setDismissed(notifications.map(n => n.id))}
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                    letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.65)',
+                    letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.88)',
                   }}
                 >Mark all read</button>
               </div>
@@ -247,7 +403,7 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
                   <div style={{
                     padding: '32px 24px', textAlign: 'center',
                     fontFamily: "'Cormorant Garamond', serif", fontSize: 15, fontWeight: 300,
-                    fontStyle: 'italic', color: 'rgba(245,240,232,0.35)',
+                    fontStyle: 'italic', color: 'rgba(245,240,232,0.70)',
                   }}>Loading…</div>
                 )}
                 <AnimatePresence initial={false}>
@@ -305,7 +461,7 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
                         onClick={() => setDismissed(d => [...d, n.id])}
                         style={{
                           background: 'none', border: 'none', cursor: 'pointer',
-                          color: 'rgba(245,240,232,0.28)', padding: '2px 4px', flexShrink: 0,
+                          color: 'rgba(245,240,232,0.88)', padding: '2px 4px', flexShrink: 0,
                           fontSize: 16, lineHeight: 1,
                           transition: 'color 0.2s',
                         }}
@@ -320,7 +476,7 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
                   <div style={{
                     padding: '32px 24px', textAlign: 'center',
                     fontFamily: "'Cormorant Garamond', serif", fontSize: 16, fontWeight: 300,
-                    fontStyle: 'italic', color: 'rgba(245,240,232,0.28)',
+                    fontStyle: 'italic', color: 'rgba(245,240,232,0.88)',
                   }}>
                     You're all caught up
                   </div>
@@ -337,7 +493,7 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
                   <button style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                    letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.45)',
+                    letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.78)',
                     transition: 'color 0.2s',
                   }}
                     onMouseEnter={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.8)')}
@@ -371,7 +527,7 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
             }}
           >
             <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 48 }}>
-              {['Home', 'Learning', 'Practice', 'Journal', 'Community'].map((item, i) => (
+              {['Home', 'Learning', 'Practice', 'Community'].map((item, i) => (
                 <motion.a
                   key={item}
                   href={`#${item.toLowerCase()}`}

@@ -215,6 +215,7 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
             style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(5,5,4,0.7)', backdropFilter: 'blur(8px)' }}
           />
 
+          <div style={{ position: 'fixed', inset: 0, zIndex: 201, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
           <motion.div
             role="dialog" aria-modal="true" aria-label="Sound Bath"
             initial={{ opacity: 0, scale: 0.97 }}
@@ -222,9 +223,10 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
             style={{
-              position: 'fixed', top: '50%', left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 201, width: 420,
+              pointerEvents: 'all',
+              width: 420,
+              maxHeight: '90vh',
+              overflowY: 'auto',
               background: 'rgba(28,24,32,0.97)',
               border: '1px solid rgba(201,169,110,0.15)',
               boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
@@ -235,7 +237,7 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
               padding: '28px 32px 20px',
               borderBottom: '1px solid rgba(201,169,110,0.1)',
             }}>
-              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.35em', color: 'rgba(201,169,110,0.72)', textTransform: 'uppercase', marginBottom: 6 }}>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.35em', color: 'rgba(201,169,110,0.91)', textTransform: 'uppercase', marginBottom: 6 }}>
                 Ambient Sound
               </p>
               <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 300, letterSpacing: '0.06em', color: 'rgba(245,240,232,0.92)' }}>
@@ -319,7 +321,7 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
                       <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 17, fontWeight: 400, letterSpacing: '0.03em', color: isPlaying ? 'rgba(245,240,232,0.95)' : 'rgba(245,240,232,0.75)', marginBottom: 2, transition: 'color 0.2s' }}>
                         {track.title}
                       </p>
-                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.35)', textTransform: 'uppercase' }}>
+                      <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.70)', textTransform: 'uppercase' }}>
                         {track.subtitle}
                       </p>
                     </div>
@@ -364,7 +366,7 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
                   background: '#c9a96e', border: '2px solid rgba(28,24,32,1)',
                 }} />
               </div>
-              <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.3)', minWidth: 28, textAlign: 'right' }}>
+              <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.89)', minWidth: 28, textAlign: 'right' }}>
                 {Math.round(volume * 100)}
               </span>
             </div>
@@ -394,7 +396,7 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
                   flex: 1, padding: '11px 0', cursor: 'pointer',
                   fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
                   letterSpacing: '0.22em', textTransform: 'uppercase',
-                  color: 'rgba(245,240,232,0.4)',
+                  color: 'rgba(245,240,232,0.74)',
                   background: 'transparent',
                   border: '1px solid rgba(245,240,232,0.1)',
                   transition: 'all 0.2s',
@@ -403,6 +405,7 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
               </button>
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

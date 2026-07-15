@@ -454,7 +454,7 @@ function WordCard({
           fontSize: 9,
           fontWeight: 300,
           letterSpacing: '0.02em',
-          color: 'rgba(201,169,110,0.75)',
+          color: 'rgba(201,169,110,0.92)',
           textAlign: 'center',
           lineHeight: 1.5,
         }}
@@ -477,7 +477,7 @@ function SanskritDictionary() {
       <div style={{ marginBottom: 72 }}>
         <p style={{
           fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
-          letterSpacing: '0.4em', color: 'rgba(201,169,110,0.82)',
+          letterSpacing: '0.4em', color: 'rgba(201,169,110,0.95)',
           textTransform: 'uppercase', marginBottom: 16,
         }}>Sacred Language</p>
         <h2 style={{
@@ -486,7 +486,7 @@ function SanskritDictionary() {
         }}>Sanskrit Dictionary</h2>
         <p style={{
           fontFamily: "'Cormorant Garamond', serif", fontSize: 17, fontWeight: 300,
-          fontStyle: 'italic', color: 'rgba(245,240,232,0.68)', maxWidth: 560, lineHeight: 1.8,
+          fontStyle: 'italic', color: 'rgba(245,240,232,0.90)', maxWidth: 560, lineHeight: 1.8,
         }}>
           Thirty words from the Yoga Vasishtha, the Yoga Sutras, and Advaita Vedanta — rendered in classical calligraphy.
         </p>
@@ -508,7 +508,7 @@ function SanskritDictionary() {
               }}>{group.title}</h3>
               <p style={{
                 fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.72)',
+                letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.91)',
               }}>{group.subtitle}</p>
             </div>
 
@@ -593,7 +593,7 @@ function SanskritDictionary() {
                       transition={{ delay: 0.05, duration: 0.35 }}
                       style={{
                         fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                        letterSpacing: '0.35em', color: 'rgba(201,169,110,0.6)',
+                        letterSpacing: '0.35em', color: 'rgba(201,169,110,0.86)',
                         textTransform: 'uppercase', marginBottom: 16,
                       }}
                     >{activeWord.stage}</motion.p>
@@ -610,7 +610,7 @@ function SanskritDictionary() {
                       }}>{activeWord.roman}</h3>
                       <span style={{
                         fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 300,
-                        fontStyle: 'italic', color: 'rgba(245,240,232,0.4)',
+                        fontStyle: 'italic', color: 'rgba(245,240,232,0.74)',
                       }}>{activeWord.devanagari}</span>
                     </motion.div>
 
@@ -620,7 +620,7 @@ function SanskritDictionary() {
                       transition={{ delay: 0.15, duration: 0.35 }}
                       style={{
                         fontFamily: "'Raleway', sans-serif", fontSize: 11, fontWeight: 300,
-                        letterSpacing: '0.3em', color: 'rgba(201,169,110,0.75)',
+                        letterSpacing: '0.3em', color: 'rgba(201,169,110,0.92)',
                         textTransform: 'uppercase', marginBottom: 32,
                       }}
                     >{activeWord.translation}</motion.p>
@@ -639,7 +639,7 @@ function SanskritDictionary() {
                       transition={{ delay: 0.25, duration: 0.45 }}
                       style={{
                         fontFamily: "'Cormorant Garamond', serif", fontSize: 20, fontWeight: 300,
-                        fontStyle: 'italic', lineHeight: 1.9, color: 'rgba(245,240,232,0.65)',
+                        fontStyle: 'italic', lineHeight: 1.9, color: 'rgba(245,240,232,0.89)',
                         marginBottom: 32, maxWidth: 520,
                       }}
                     >{activeWord.meaning}</motion.p>
@@ -650,7 +650,7 @@ function SanskritDictionary() {
                       transition={{ delay: 0.35, duration: 0.35 }}
                       style={{
                         fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                        letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.62)',
+                        letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.87)',
                         border: '1px solid rgba(201,169,110,0.18)', padding: '4px 12px', alignSelf: 'flex-start',
                       }}
                     >{activeWord.tradition}</motion.span>
@@ -755,7 +755,7 @@ export default function LearningPage() {
             fontSize: 11,
             fontWeight: 300,
             letterSpacing: '0.35em',
-            color: 'rgba(201,169,110,0.8)',
+            color: 'rgba(201,169,110,0.94)',
             textTransform: 'uppercase',
           }}>
             Ancient wisdom · Modern practice
@@ -878,7 +878,7 @@ export default function LearningPage() {
                   <div style={{ width: 32, height: 1, background: 'rgba(201,169,110,0.5)', flexShrink: 0 }} />
                   <span style={{
                     fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
-                    letterSpacing: '0.38em', color: 'rgba(201,169,110,0.7)', textTransform: 'uppercase',
+                    letterSpacing: '0.38em', color: 'rgba(201,169,110,0.90)', textTransform: 'uppercase',
                   }}>Origins</span>
                 </div>
                 <h2 style={{
@@ -927,7 +927,7 @@ export default function LearningPage() {
                     >
                       <span style={{
                         fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                        letterSpacing: '0.28em', color: 'rgba(201,169,110,0.65)', textTransform: 'uppercase',
+                        letterSpacing: '0.28em', color: 'rgba(201,169,110,0.88)', textTransform: 'uppercase',
                         display: 'block', marginBottom: 10,
                       }}>{item.era}</span>
                       <h3 style={{
@@ -936,7 +936,7 @@ export default function LearningPage() {
                       }}>{item.title}</h3>
                       <p style={{
                         fontFamily: "'Raleway', sans-serif", fontSize: 12, fontWeight: 300,
-                        lineHeight: 1.85, color: 'rgba(245,240,232,0.58)', letterSpacing: '0.02em',
+                        lineHeight: 1.85, color: 'rgba(245,240,232,0.86)', letterSpacing: '0.02em',
                       }}>{item.body}</p>
                     </motion.div>
                   ))}

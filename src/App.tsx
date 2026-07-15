@@ -4,13 +4,14 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation, Link } from 're
 import { useState } from 'react'
 import Navbar from './components/Navbar'
 import { TriangleSymbol, DiamondSymbol, PracticeSymbol } from './components/Symbols'
+import { AuthProvider } from './lib/auth'
+import OAuthCallback from './pages/OAuthCallback'
 
 const LearningPage = lazy(() => import('./pages/LearningPage'))
 const PracticePage = lazy(() => import('./pages/PracticePage'))
-const JournalPage = lazy(() => import('./pages/JournalPage'))
 const CommunityPage = lazy(() => import('./pages/CommunityPage'))
 
-type Page = 'home' | 'learning' | 'practice' | 'journal' | 'community'
+type Page = 'home' | 'learning' | 'practice' | 'community'
 
 const SPRING = { type: 'spring' as const, stiffness: 70, damping: 18, mass: 1 }
 
@@ -63,10 +64,6 @@ const pageMeta: Record<string, { title: string; description: string }> = {
   '/community': {
     title: 'The Gathering — Community | Rishi',
     description: 'Connect with a global community of yogis, mindfulness practitioners, and seekers. Share insights, inspire, and grow together.',
-  },
-  '/journal': {
-    title: 'Journal — Personal Reflections | Rishi',
-    description: 'A private space for your practice journal. Record reflections, track your inner journey, and cultivate self-awareness.',
   },
 }
 
@@ -210,7 +207,7 @@ function HomePageView() {
                   <div style={{ width: 22, height: 1, background: 'rgba(201,169,110,0.62)' }} />
                   <span style={{
                     fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                    letterSpacing: '0.32em', color: 'rgba(201,169,110,0.7)', textTransform: 'uppercase',
+                    letterSpacing: '0.32em', color: 'rgba(201,169,110,0.90)', textTransform: 'uppercase',
                   }}>Enter</span>
                   <div style={{ width: 22, height: 1, background: 'rgba(201,169,110,0.62)' }} />
                 </motion.div>
@@ -241,7 +238,7 @@ function AppInner() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [location.pathname])
 
-  const pages = ['home', 'learning', 'practice', 'journal', 'community']
+  const pages = ['home', 'learning', 'practice', 'community']
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh' }}>
@@ -281,14 +278,7 @@ function AppInner() {
                 <PracticePage />
               </motion.div>
             } />
-            <Route path="/journal" element={
-              <motion.div key="journal"
-                initial={{ opacity: 0 }} animate={pageEnter} exit={pageExit}
-                style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh' }}
-              >
-                <JournalPage />
-              </motion.div>
-            } />
+            <Route path="/oauth-callback" element={<OAuthCallback />} />
             <Route path="/community" element={
               <motion.div key="community"
                 initial={{ opacity: 0 }} animate={pageEnter} exit={pageExit}
@@ -364,10 +354,12 @@ function AppInner() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <LayoutGroup>
-        <AppInner />
-      </LayoutGroup>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <LayoutGroup>
+          <AppInner />
+        </LayoutGroup>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
