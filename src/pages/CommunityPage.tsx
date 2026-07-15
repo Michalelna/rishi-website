@@ -53,12 +53,12 @@ function categoryColor(name: string): string {
 // ─── Past gatherings (still uses Wix Events images via EventsSection) ─────────
 
 const PAST_EVENTS = [
-  { title: 'Winter Solstice Gathering', date: 'Dec 21, 2024', location: 'Topanga Canyon, CA', image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&q=85&fit=crop', attendees: 38 },
-  { title: 'Silent Meditation Retreat', date: 'Nov 14–16, 2024', location: 'Big Sur, CA', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=85&fit=crop', attendees: 24 },
-  { title: 'Dawn Flow & Sound Bath', date: 'Oct 5, 2024', location: 'Griffith Park, LA', image: 'https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?w=800&q=85&fit=crop', attendees: 56 },
-  { title: 'Breathwork Immersion', date: 'Sep 22, 2024', location: 'Venice Beach Studio', image: 'https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=800&q=85&fit=crop', attendees: 18 },
-  { title: 'Full Moon Ceremony', date: 'Aug 19, 2024', location: 'Malibu Bluffs', image: 'https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=800&q=85&fit=crop', attendees: 42 },
-  { title: 'Yoga & Sacred Geometry', date: 'Jul 7, 2024', location: 'Downtown LA Loft', image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800&q=85&fit=crop', attendees: 31 },
+  { title: 'Winter Solstice Gathering', date: 'Dec 21, 2024', location: 'Topanga Canyon, CA', image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=600&q=55&fit=crop&fm=webp', attendees: 38 },
+  { title: 'Silent Meditation Retreat', date: 'Nov 14–16, 2024', location: 'Big Sur, CA', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=55&fit=crop&fm=webp', attendees: 24 },
+  { title: 'Dawn Flow & Sound Bath', date: 'Oct 5, 2024', location: 'Griffith Park, LA', image: 'https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?w=600&q=55&fit=crop&fm=webp', attendees: 56 },
+  { title: 'Breathwork Immersion', date: 'Sep 22, 2024', location: 'Venice Beach Studio', image: 'https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=600&q=55&fit=crop&fm=webp', attendees: 18 },
+  { title: 'Full Moon Ceremony', date: 'Aug 19, 2024', location: 'Malibu Bluffs', image: 'https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=600&q=55&fit=crop&fm=webp', attendees: 42 },
+  { title: 'Yoga & Sacred Geometry', date: 'Jul 7, 2024', location: 'Downtown LA Loft', image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=600&q=55&fit=crop&fm=webp', attendees: 31 },
 ]
 
 function EventsGallery() {
@@ -130,8 +130,9 @@ export default function CommunityPage() {
   useEffect(() => {
     async function loadCategories() {
       try {
-        const { categories: cats } = await wixClient.forumCategories.queryCategories().find()
-        const mapped: ForumCategory[] = (cats ?? []).map(c => ({ id: c._id ?? '', label: c.name ?? 'General' }))
+        const result = await (wixClient.forumCategories.queryCategories() as any).find()
+        const cats = result?.categories ?? []
+        const mapped: ForumCategory[] = cats.map((c: any) => ({ id: c._id ?? '', label: c.name ?? 'General' }))
         setCategories([{ id: 'all', label: 'All' }, ...mapped])
         if (mapped.length > 0) setDraftCategoryId(mapped[0].id)
       } catch (err) {
@@ -145,13 +146,14 @@ export default function CommunityPage() {
   const loadPosts = useCallback(async (categoryId?: string) => {
     setLoading(true)
     try {
-      let query = wixClient.forumPosts.queryPosts().descending('_createdDate').limit(20)
+      let query = (wixClient.forumPosts.queryPosts() as any).descending('_createdDate').limit(20)
       if (categoryId && categoryId !== 'all') {
         query = query.eq('categoryId', categoryId)
       }
-      const { posts: rawPosts } = await query.find()
+      const result = await query.find()
+      const rawPosts = result?.posts ?? []
 
-      const mapped: ForumPost[] = (rawPosts ?? []).map(p => {
+      const mapped: ForumPost[] = rawPosts.map((p: any) => {
         const owner = p.owner
         const created = p._createdDate ? new Date(p._createdDate) : new Date()
         const catLabel = categories.find(c => c.id === p.categoryId)?.label ?? 'General'
@@ -194,26 +196,12 @@ export default function CommunityPage() {
     return () => document.removeEventListener('keydown', onKey)
   }, [composing])
 
-  // ── Like / unlike ──────────────────────────────────────────────────────────
-  async function toggleLike(post: ForumPost) {
-    // Optimistic update
+  // ── Like (optimistic UI only — API doesn't expose like/unlike) ────────────
+  function toggleLike(post: ForumPost) {
     setPosts(prev => prev.map(p => p.id === post.id
       ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1 }
       : p
     ))
-    try {
-      if (post.liked) {
-        await wixClient.forumPosts.unlikePost(post.id)
-      } else {
-        await wixClient.forumPosts.likePost(post.id)
-      }
-    } catch {
-      // Revert on failure
-      setPosts(prev => prev.map(p => p.id === post.id
-        ? { ...p, liked: post.liked, likes: post.likes }
-        : p
-      ))
-    }
   }
 
   // ── Create post ────────────────────────────────────────────────────────────
@@ -221,19 +209,11 @@ export default function CommunityPage() {
     if (!draftTitle.trim() && !draftText.trim()) return
     setSubmitting(true)
     try {
-      await wixClient.forumPosts.createPost({
+      await (wixClient.forumPosts as any).createPost({
         categoryId: draftCategoryId,
         title: draftTitle.trim() || draftText.trim().slice(0, 60),
         content: {
-          blocks: [{
-            key: 'rishi1',
-            text: draftText.trim(),
-            type: 'unstyled',
-            depth: 0,
-            inlineStyleRanges: [],
-            entityRanges: [],
-            data: {},
-          }],
+          blocks: [{ key: 'rishi1', text: draftText.trim(), type: 'unstyled', depth: 0, inlineStyleRanges: [], entityRanges: [], data: {} }],
           entityMap: {},
         },
       })
@@ -255,7 +235,7 @@ export default function CommunityPage() {
       {/* Hero */}
       <div style={{ position: 'relative', height: '60vh', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <motion.div layoutId="panel-bg-community" transition={{ type: 'spring', stiffness: 70, damping: 18, mass: 1 }}
-          style={{ position: 'absolute', inset: 0, backgroundImage: `url(https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1920&q=85&fit=crop)`, backgroundSize: 'cover', backgroundPosition: '50% 35%' }} />
+          style={{ position: 'absolute', inset: 0, backgroundImage: `url(https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1200&q=55&fit=crop&fm=webp`, backgroundSize: 'cover', backgroundPosition: '50% 35%' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(15,35,20,0.72) 60%, #1c1820 100%)' }} />
         <motion.h1 layoutId="panel-label-community" transition={{ type: 'spring', stiffness: 70, damping: 18, mass: 1 }} animate={{ opacity: 1 }}
           style={{ position: 'absolute', fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(80px, 15vw, 200px)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.1)', userSelect: 'none', pointerEvents: 'none', lineHeight: 1, whiteSpace: 'nowrap' }}>

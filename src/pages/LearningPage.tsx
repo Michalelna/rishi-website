@@ -14,28 +14,28 @@ const courses = [
     duration: '4h 20m',
     lessons: 12,
     level: 'Beginner',
-    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80&fit=crop',
+    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=55&fit=crop&fm=webp',
   },
   {
     title: 'Pranayama & Breath',
     duration: '2h 45m',
     lessons: 8,
     level: 'Intermediate',
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80&fit=crop',
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=55&fit=crop&fm=webp',
   },
   {
     title: 'Sacred Geometry',
     duration: '3h 10m',
     lessons: 10,
     level: 'Advanced',
-    image: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600&q=80&fit=crop',
+    image: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600&q=55&fit=crop&fm=webp',
   },
   {
     title: 'The Chakra System',
     duration: '5h 00m',
     lessons: 15,
     level: 'Intermediate',
-    image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=80&fit=crop',
+    image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=55&fit=crop&fm=webp',
   },
 ]
 
@@ -716,7 +716,7 @@ export default function LearningPage() {
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: `url(https://images.unsplash.com/photo-1571844088753-73ca0880bcd9?w=1920&q=85&fit=crop)`,
+            backgroundImage: `url(https://images.unsplash.com/photo-1571844088753-73ca0880bcd9?w=1200&q=55&fit=crop&fm=webp`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}

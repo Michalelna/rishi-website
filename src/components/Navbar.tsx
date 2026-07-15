@@ -37,12 +37,13 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
     async function fetchForumActivity() {
       setLoading(true)
       try {
-        const { posts } = await wixClient.forumPosts.queryPosts()
+        const result = await (wixClient.forumPosts.queryPosts() as any)
           .descending('_createdDate')
           .limit(10)
           .find()
+        const posts = result?.posts ?? []
 
-        const live: LiveNotification[] = (posts ?? []).map(post => {
+        const live: LiveNotification[] = posts.map((post: any) => {
           const author = post.owner
           const name = author?.nickname ?? author?.name ?? 'Someone'
           const avatar = author?.image?.url ?? ''
@@ -340,7 +341,7 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
                     transition: 'color 0.2s',
                   }}
                     onMouseEnter={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.8)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.45)'}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.45)')}
                   >Show more</button>
                 </div>
               )}

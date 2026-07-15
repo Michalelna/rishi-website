@@ -54,10 +54,16 @@
     }
     </script>
 
+    <!-- Preload hero images (LCP) -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=60&fit=crop&fm=webp" />
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=60&fit=crop&fm=webp" />
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1473186578172-c141e6798cf4?w=800&q=60&fit=crop&fm=webp" />
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@300;400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@300;400&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@300;400&display=swap" rel="stylesheet" /></noscript>
   </head>
   <body>
     <div id="root"></div>

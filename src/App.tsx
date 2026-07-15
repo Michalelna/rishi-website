@@ -13,15 +13,15 @@ type Page = 'home' | 'learning' | 'practice' | 'journal' | 'community'
 
 const SPRING = { type: 'spring' as const, stiffness: 70, damping: 18, mass: 1 }
 
-const pageEnter = { opacity: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } }
-const pageExit  = { opacity: 0, transition: { duration: 0.25, ease: 'easeIn' } }
+const pageEnter = { opacity: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] } }
+const pageExit  = { opacity: 0, transition: { duration: 0.25, ease: 'easeIn' as const } }
 
 const homePanels = [
   {
     id: 'community' as Page,
     label: 'Community',
     sublabel: 'Connect & Grow',
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1400&q=80&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.35&fp-z=1',
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1200&q=55&fit=crop&fm=webp&crop=focalpoint&fp-x=0.5&fp-y=0.35&fp-z=1',
     bgPosition: '50% 35%',
     tint: 'rgba(15,35,20,0.5)',
     symbol: 'triangle',
@@ -30,7 +30,7 @@ const homePanels = [
     id: 'practice' as Page,
     label: 'Practice',
     sublabel: 'Move & Breathe',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=80&fit=crop',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=55&fit=crop&fm=webp',
     bgPosition: 'center',
     tint: 'rgba(8,18,38,0.45)',
     symbol: 'circles',
@@ -39,7 +39,7 @@ const homePanels = [
     id: 'learning' as Page,
     label: 'Learning',
     sublabel: 'Study & Discover',
-    image: 'https://images.unsplash.com/photo-1571844088753-73ca0880bcd9?w=1400&q=80&fit=crop',
+    image: 'https://images.unsplash.com/photo-1571844088753-73ca0880bcd9?w=1200&q=55&fit=crop&fm=webp',
     bgPosition: 'center',
     tint: 'rgba(55,22,8,0.5)',
     symbol: 'diamond',

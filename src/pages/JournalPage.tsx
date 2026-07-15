@@ -44,7 +44,7 @@ export default function JournalPage() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: `url(https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1920&q=80&fit=crop&blend=000&bm=multiply)`,
+          backgroundImage: `url(https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&q=55&fit=crop&fm=webp&blend=000&bm=multiply`,
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
           filter: 'brightness(0.35) saturate(0.5)',

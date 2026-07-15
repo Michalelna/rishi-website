@@ -8,7 +8,7 @@ const practices = [
     subtitle: 'Sun Salutation Series',
     duration: '30 min',
     type: 'Movement',
-    image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800&q=80&fit=crop',
+    image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=600&q=55&fit=crop&fm=webp',
     color: 'rgba(40,80,100,0.6)',
   },
   {
@@ -16,7 +16,7 @@ const practices = [
     subtitle: '4-7-8 Pranayama',
     duration: '15 min',
     type: 'Breath',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=55&fit=crop&fm=webp',
     color: 'rgba(20,40,70,0.6)',
   },
   {
@@ -24,7 +24,7 @@ const practices = [
     subtitle: 'Root to Crown',
     duration: '45 min',
     type: 'Meditation',
-    image: 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?w=800&q=80&fit=crop',
+    image: 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?w=600&q=55&fit=crop&fm=webp',
     color: 'rgba(60,20,60,0.6)',
   },
 ]
@@ -49,7 +49,7 @@ export default function PracticePage() {
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: `url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=85&fit=crop)`,
+            backgroundImage: `url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=55&fit=crop&fm=webp`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
