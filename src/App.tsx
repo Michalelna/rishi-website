@@ -1,12 +1,11 @@
 import { useEffect, lazy, Suspense } from 'react'
 import { AnimatePresence, motion, LayoutGroup } from 'framer-motion'
 import { BrowserRouter, Routes, Route, useNavigate, useLocation, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Navbar from './components/Navbar'
 import { TriangleSymbol, DiamondSymbol, PracticeSymbol } from './components/Symbols'
 import { AuthProvider } from './lib/auth'
 import OAuthCallback from './pages/OAuthCallback'
-import { useWindowWidth } from './lib/useWindowWidth'
 
 const LearningPage = lazy(() => import('./pages/LearningPage'))
 const PracticePage = lazy(() => import('./pages/PracticePage'))
@@ -35,7 +34,7 @@ const homePanels = [
     sublabel: 'Move & Breathe',
     image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=55&fit=crop&fm=webp',
     bgPosition: 'center',
-    tint: 'rgba(8,18,38,0.45)',
+    tint: 'rgba(8,18,38,0.3)',
     symbol: 'circles',
   },
   {
@@ -68,157 +67,78 @@ const pageMeta: Record<string, { title: string; description: string }> = {
   },
 }
 
-function SymbolEl({ type, hovered, mobile }: { type: string; hovered: boolean; mobile?: boolean }) {
+function SymbolEl({ type, hovered }: { type: string; hovered: boolean }) {
   const color = hovered ? 'rgba(201,169,110,0.82)' : 'rgba(245,240,232,0.82)'
-  if (type === 'triangle') return <TriangleSymbol size={mobile ? 110 : 200} color={color} isHovered={hovered} />
-  if (type === 'circles')  return <PracticeSymbol size={mobile ? 120 : 220} color={color} isHovered={hovered} />
-  if (type === 'diamond')  return <DiamondSymbol size={mobile ? 110 : 200} color={color} isHovered={hovered} />
+  if (type === 'triangle') return <TriangleSymbol size={200} color={color} isHovered={hovered} />
+  if (type === 'circles')  return <PracticeSymbol size={220} color={color} isHovered={hovered} />
+  if (type === 'diamond')  return <DiamondSymbol size={200} color={color} isHovered={hovered} />
   return null
 }
 
 function HomePageView() {
-  const [hovered, setHovered] = useState<string | null>(null)
+  const [hovered, setHovered] = useState<number | null>(null)
   const navigate = useNavigate()
-  const isMobile = useWindowWidth() < 768
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = containerRef.current!.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    setHovered(Math.min(2, Math.floor((x / rect.width) * 3)))
+  }
 
   return (
-    <div className="home-panels" style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden' }}>
-      {homePanels.map((panel, i) => {
-        const isHov = hovered === panel.id
-        const isOther = hovered !== null && hovered !== panel.id
-        const flex = isHov ? 1.6 : isOther ? 0.7 : 1
+    <div
+      className="home-panels"
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => setHovered(null)}
+    >
+      {homePanels.map((panel, i) => (
+        <div
+          key={panel.id}
+          className={`home-panel${hovered === i ? ' is-active' : hovered !== null ? ' is-dim' : ''}`}
+          role="button"
+          tabIndex={0}
+          aria-label={`Enter ${panel.label} — ${panel.sublabel}`}
+          onClick={() => navigate('/' + panel.id)}
+          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/' + panel.id) } }}
+        >
+          {/* Background image */}
+          <div className="panel-bg-wrap">
+            <div className="panel-bg" style={{ backgroundImage: `url(${panel.image})`, backgroundPosition: panel.bgPosition }} />
+          </div>
+          <div style={{ position: 'absolute', inset: 0, background: panel.tint }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.55) 100%)' }} />
 
-        return (
-          <motion.div
-            key={panel.id}
-            role="button"
-            tabIndex={0}
-            aria-label={`Enter ${panel.label} — ${panel.sublabel}`}
-            onHoverStart={() => setHovered(panel.id)}
-            onHoverEnd={() => setHovered(null)}
-            onClick={() => navigate('/' + panel.id)}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/' + panel.id) } }}
-            animate={isMobile ? {} : { flex }}
-            transition={{ duration: 0.75, ease: [0.43, 0.13, 0.23, 0.96] }}
-            className="home-panel"
-            style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer', flexShrink: 0, height: isMobile ? '33.33vh' : '100vh', flex: isMobile ? undefined : flex }}
-          >
-            <motion.div
-              layoutId={`panel-bg-${panel.id}`}
-              transition={SPRING}
-              style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}
-            >
-              <motion.div
-                animate={{ scale: isHov ? 1.05 : 1 }}
-                transition={{ duration: 1, ease: 'easeOut' }}
-                style={{
-                  position: 'absolute', inset: 0,
-                  backgroundImage: `url(${panel.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: panel.bgPosition,
-                }}
-              />
-            </motion.div>
-            <div style={{ position: 'absolute', inset: 0, background: panel.tint }} />
-            <div style={{
-              position: 'absolute', inset: 0,
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.55) 100%)',
-            }} />
+          {i < homePanels.length - 1 && (
+            <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 1, zIndex: 2, background: 'linear-gradient(to bottom, transparent, rgba(201,169,110,0.28) 50%, transparent)' }} />
+          )}
 
-            {i < homePanels.length - 1 && (
-              <div style={{
-                position: 'absolute', right: 0, top: 0, bottom: 0, width: 1, zIndex: 2,
-                background: 'linear-gradient(to bottom, transparent, rgba(201,169,110,0.28) 50%, transparent)',
-              }} />
-            )}
+          {/* Symbol */}
+          <div className="panel-symbol-wrap">
+            <div className="panel-symbol">
+              <SymbolEl type={panel.symbol} hovered={hovered === i} />
+            </div>
+          </div>
 
-            <motion.div
-              layoutId={`panel-symbol-${panel.id}`}
-              transition={SPRING}
-              style={{
-                position: 'absolute',
-                top: 0, bottom: isMobile ? 60 : 140,
-                left: 0, right: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 3, pointerEvents: 'none',
-              }}
-            >
-              <motion.div
-                animate={{ opacity: isOther ? 0.15 : 1, scale: isHov ? 1.06 : 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <SymbolEl type={panel.symbol} hovered={isHov} mobile={isMobile} />
-              </motion.div>
-            </motion.div>
+          {/* Label */}
+          <div className="panel-label-wrap">
+            <span className="panel-label" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 30, fontWeight: 300, letterSpacing: '0.42em', color: 'var(--white)', textTransform: 'uppercase' }}>
+              {panel.label}
+            </span>
+            <span className="panel-sublabel" style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.32em', color: 'rgba(201,169,110,0.9)', textTransform: 'uppercase' }}>
+              {panel.sublabel}
+            </span>
+          </div>
 
-            <motion.div
-              layoutId={`panel-label-${panel.id}`}
-              transition={SPRING}
-              style={{
-                position: 'absolute', bottom: 68, left: 0, right: 0,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, zIndex: 4,
-              }}
-            >
-              <motion.span
-                animate={{ opacity: isOther ? 0.22 : 1, y: isHov ? -12 : 0 }}
-                transition={{ duration: 0.5 }}
-                style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: 30,
-                  fontWeight: 300,
-                  letterSpacing: '0.42em',
-                  color: 'var(--white)',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {panel.label}
-              </motion.span>
-              <AnimatePresence>
-                {isHov && (
-                  <motion.span
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    style={{
-                      fontFamily: "'Raleway', sans-serif",
-                      fontSize: 10,
-                      fontWeight: 300,
-                      letterSpacing: '0.32em',
-                      color: 'rgba(201,169,110,0.9)',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {panel.sublabel}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.div>
-
-            <AnimatePresence>
-              {isHov && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  style={{
-                    position: 'absolute', bottom: 26, left: 0, right: 0,
-                    display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 14, zIndex: 4,
-                  }}
-                >
-                  <div style={{ width: 22, height: 1, background: 'rgba(201,169,110,0.62)' }} />
-                  <span style={{
-                    fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300,
-                    letterSpacing: '0.32em', color: 'rgba(201,169,110,0.90)', textTransform: 'uppercase',
-                  }}>Enter</span>
-                  <div style={{ width: 22, height: 1, background: 'rgba(201,169,110,0.62)' }} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        )
-      })}
+          {/* Enter hint */}
+          <div className="panel-enter">
+            <div style={{ width: 22, height: 1, background: 'rgba(201,169,110,0.62)' }} />
+            <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.32em', color: 'rgba(201,169,110,0.90)', textTransform: 'uppercase' }}>Enter</span>
+            <div style={{ width: 22, height: 1, background: 'rgba(201,169,110,0.62)' }} />
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -227,7 +147,6 @@ function AppInner() {
   const navigate = useNavigate()
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const isMobile = useWindowWidth() < 768
 
   useEffect(() => {
     document.getElementById('splash')?.remove()
@@ -307,8 +226,8 @@ function AppInner() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: isMobile ? 16 : 52,
-            padding: isMobile ? '24px 20px' : '36px 80px',
+            gap: 52,
+            padding: '36px 80px',
             borderTop: '1px solid rgba(201,169,110,0.14)',
             background: '#1c1820',
           }}

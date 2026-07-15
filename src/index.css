@@ -66,33 +66,38 @@ html, body {
   top: 16px;
 }
 
-/* 2.3.3 Animation from Interactions — honour reduced-motion preference */
-/* ── Mobile layout helpers ───────────────────────────── */
-@media (max-width: 767px) {
-  .home-panels {
-    flex-direction: column !important;
-  }
-  .nav-left-icons {
-    display: none !important;
-  }
-  .nav-sign-in {
-    display: none !important;
-  }
-  .nav-padding {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-  .page-padding {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-  .footer-nav {
-    padding: 24px 20px !important;
-    gap: 16px !important;
-    flex-wrap: wrap !important;
-  }
+/* ── Home panels — stable-overlay hover, no CSS :hover flicker ── */
+.home-panels { display: flex; width: 100vw; height: 100vh; overflow: hidden; }
+.home-panel  {
+  position: relative; overflow: hidden; cursor: pointer;
+  flex: 1; transition: flex 0.48s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
+.home-panel.is-active { flex: 1.6; }
+.home-panel.is-dim    { flex: 0.7; }
 
+/* Background image */
+.panel-bg-wrap { position: absolute; inset: 0; overflow: hidden; }
+.panel-bg { position: absolute; inset: 0; background-size: cover; }
+
+/* Symbol */
+.panel-symbol-wrap { position: absolute; top: 0; bottom: 140px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; z-index: 3; pointer-events: none; }
+.panel-symbol { transition: opacity 0.5s, transform 0.5s; }
+.home-panel.is-dim    .panel-symbol { opacity: 0.15; }
+.home-panel.is-active .panel-symbol { opacity: 1; transform: scale(1.06); }
+
+/* Label */
+.panel-label-wrap { position: absolute; bottom: 68px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 4; }
+.panel-label { display: block; transition: opacity 0.5s, transform 0.5s; }
+.home-panel.is-dim    .panel-label { opacity: 0.22; }
+.home-panel.is-active .panel-label { opacity: 1; transform: translateY(-12px); }
+.panel-sublabel { display: block; opacity: 0; transition: opacity 0.4s; }
+.home-panel.is-active .panel-sublabel { opacity: 1; }
+
+/* Enter hint */
+.panel-enter { position: absolute; bottom: 26px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 14px; z-index: 4; opacity: 0; transition: opacity 0.3s; }
+.home-panel.is-active .panel-enter { opacity: 1; }
+
+/* 2.3.3 Animation from Interactions — honour reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
