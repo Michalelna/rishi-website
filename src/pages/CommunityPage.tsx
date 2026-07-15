@@ -235,7 +235,7 @@ export default function CommunityPage() {
       {/* Hero */}
       <div style={{ position: 'relative', height: '60vh', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <motion.div layoutId="panel-bg-community" transition={{ type: 'spring', stiffness: 70, damping: 18, mass: 1 }}
-          style={{ position: 'absolute', inset: 0, backgroundImage: `url(https://images.unsplash.com/photo-1588286840104-8957b019727f?w=1200&q=55&fit=crop&fm=webp)`, backgroundSize: 'cover', backgroundPosition: '50% 35%' }} />
+          style={{ position: 'absolute', inset: 0, backgroundImage: `url(https://images.unsplash.com/photo-1545389336-cf090694435e?w=1200&q=55&fit=crop&fm=webp)`, backgroundSize: 'cover', backgroundPosition: '50% 35%' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(15,35,20,0.72) 60%, #1c1820 100%)' }} />
         <motion.h1 layoutId="panel-label-community" transition={{ type: 'spring', stiffness: 70, damping: 18, mass: 1 }} animate={{ opacity: 1 }}
           style={{ position: 'absolute', fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(80px, 15vw, 200px)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.1)', userSelect: 'none', pointerEvents: 'none', lineHeight: 1, whiteSpace: 'nowrap' }}>

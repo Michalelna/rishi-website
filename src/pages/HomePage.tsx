@@ -7,7 +7,7 @@ const panels = [
     id: 'community',
     label: 'Community',
     sublabel: 'Connect & Grow',
-    image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800&q=60&fit=crop&fm=webp',
+    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&q=60&fit=crop&fm=webp',
     symbol: 'triangle',
     tint: 'rgba(20,40,25,0.45)',
   },
