@@ -716,7 +716,7 @@ export default function LearningPage() {
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: `url(https://images.unsplash.com/photo-1571844088753-73ca0880bcd9?w=1200&q=55&fit=crop&fm=webp`,
+            backgroundImage: `url(https://images.unsplash.com/photo-1571844088753-73ca0880bcd9?w=1200&q=55&fit=crop&fm=webp)`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}

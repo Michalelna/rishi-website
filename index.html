@@ -38,55 +38,50 @@
       "url": "https://rishi-webs-06f30fec-michaleln.wix-site-host.com/",
       "logo": "https://rishi-webs-06f30fec-michaleln.wix-site-host.com/favicon.svg",
       "description": "Rishi is a yoga and wellness platform offering guided practices, Sanskrit learning, breathwork, meditation, and a mindful community.",
-      "sameAs": [],
-      "offers": [
-        {
-          "@type": "Offer",
-          "name": "Yoga & Meditation Practice",
-          "description": "Morning flow, breathwork, and guided meditation sessions"
-        },
-        {
-          "@type": "Offer",
-          "name": "Sanskrit Learning",
-          "description": "Sanskrit dictionary and Introduction to Yoga philosophy courses"
-        }
-      ]
+      "sameAs": []
     }
     </script>
 
-    <!-- Preload hero images (LCP) -->
-    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=60&fit=crop&fm=webp" />
-    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=60&fit=crop&fm=webp" />
-    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1473186578172-c141e6798cf4?w=800&q=60&fit=crop&fm=webp" />
+    <!-- Preconnect to Unsplash CDN -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+
+    <!-- Preload first (LCP) image only — loading all 3 in parallel on slow 4G hurts LCP -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=400&q=40&fit=crop&fm=webp" fetchpriority="high" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@300;400&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@300;400&display=swap" rel="stylesheet" /></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Raleway:wght@300&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&family=Raleway:wght@300&display=swap" rel="stylesheet" /></noscript>
 
     <style>
       *{box-sizing:border-box;margin:0;padding:0}
+      html,body{width:100%;height:100%}
       body{background:#1c1820;color:#f5f0e8;font-family:Georgia,serif}
-      #splash{display:flex;width:100vw;height:100vh;overflow:hidden}
-      .sp{flex:1;position:relative;overflow:hidden;cursor:pointer}
-      .sp img{width:100%;height:100%;object-fit:cover;filter:brightness(0.55)}
-      .sp-label{position:absolute;bottom:60px;left:0;right:0;text-align:center;font-size:28px;letter-spacing:0.3em;text-transform:uppercase;color:#f5f0e8}
-      @media(max-width:767px){#splash{flex-direction:column}}
+      /* Splash is fixed so it overlays #root — zero layout shift on removal */
+      #splash{position:fixed;inset:0;display:flex;z-index:9999;background:#1c1820}
+      .sp{flex:1;position:relative;overflow:hidden}
+      .sp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.5)}
+      .sp-label{position:absolute;bottom:60px;left:0;right:0;text-align:center;font-size:26px;letter-spacing:0.3em;text-transform:uppercase;color:#f5f0e8;font-family:Georgia,serif}
+      #root{min-height:100%}
+      @media(max-width:767px){
+        #splash{flex-direction:column}
+        .sp-label{font-size:20px;bottom:28px}
+      }
     </style>
   </head>
   <body>
     <div id="splash" aria-hidden="true">
       <div class="sp">
-        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=55&fit=crop&fm=webp" alt="Rishi Yoga Community" width="800" height="600" fetchpriority="high" />
+        <img src="https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=400&q=40&fit=crop&fm=webp" alt="" width="400" height="600" fetchpriority="high" decoding="sync" />
         <div class="sp-label">Community</div>
       </div>
       <div class="sp">
-        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=55&fit=crop&fm=webp" alt="Practice" width="800" height="600" fetchpriority="high" />
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=35&fit=crop&fm=webp" alt="" width="400" height="600" fetchpriority="low" decoding="async" />
         <div class="sp-label">Practice</div>
       </div>
       <div class="sp">
-        <img src="https://images.unsplash.com/photo-1473186578172-c141e6798cf4?w=800&q=55&fit=crop&fm=webp" alt="Learning" width="800" height="600" fetchpriority="high" />
+        <img src="https://images.unsplash.com/photo-1473186578172-c141e6798cf4?w=400&q=35&fit=crop&fm=webp" alt="" width="400" height="600" fetchpriority="low" decoding="async" />
         <div class="sp-label">Learning</div>
       </div>
     </div>

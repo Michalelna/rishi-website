@@ -22,7 +22,7 @@ const homePanels = [
     id: 'community' as Page,
     label: 'Community',
     sublabel: 'Connect & Grow',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=55&fit=crop&fm=webp',
+    image: 'https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=1200&q=55&fit=crop&fm=webp',
     bgPosition: '50% 35%',
     tint: 'rgba(15,35,20,0.5)',
     symbol: 'triangle',

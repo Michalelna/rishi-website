@@ -82,7 +82,7 @@ export default function ChakraBody() {
   return (
     <div style={{
       padding: '100px 80px',
-      background: '#080808',
+      background: '#1c1820',
       display: 'flex',
       alignItems: 'center',
       gap: 80,
@@ -143,7 +143,7 @@ export default function ChakraBody() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'radial-gradient(ellipse 70% 90% at 50% 38%, transparent 35%, #080808 100%)',
+          background: 'radial-gradient(ellipse 70% 90% at 50% 38%, transparent 35%, #1c1820 100%)',
         }} />
 
         {/* Spine line */}
