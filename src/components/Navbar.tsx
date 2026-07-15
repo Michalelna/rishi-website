@@ -4,6 +4,7 @@ import MusicModal from './MusicModal'
 import AuthModal from './AuthModal'
 import { wixClient } from '../lib/wix'
 import { useAuth } from '../lib/auth'
+import { useWindowWidth } from '../lib/useWindowWidth'
 
 interface LiveNotification {
   id: string
@@ -29,6 +30,7 @@ function timeAgo(date: Date): string {
 
 export default function Navbar({ transparent = false, onHome, onNavigate }: NavbarProps) {
   const { member, logout } = useAuth()
+  const isMobile = useWindowWidth() < 768
 
   const [menuOpen, setMenuOpen] = useState(false)
   const [musicOpen, setMusicOpen] = useState(false)
@@ -112,7 +114,7 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 48px',
+          padding: isMobile ? '0 16px' : '0 48px',
           background: transparent
             ? 'linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 100%)'
             : 'rgba(8,7,6,0.85)',
@@ -121,8 +123,8 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
           transition: 'background 0.4s ease',
         }}
       >
-        {/* Left icons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28, position: 'relative' }}>
+        {/* Left icons — hidden on mobile (accessible via menu) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 28, position: 'relative', visibility: isMobile ? 'hidden' : 'visible' }}>
           <NavIcon label="Notifications" onClick={() => setNotifOpen(o => !o)} active={notifOpen}>
             <BellIcon unread={notifications.length > 0 && dismissed.length < notifications.length} />
           </NavIcon>
@@ -166,20 +168,20 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
                   : <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 11, color: 'rgba(201,169,110,0.9)', textTransform: 'uppercase' }}>{member.nickname[0]}</span>
                 }
               </div>
-              <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 12, fontWeight: 200, letterSpacing: '0.1em', color: 'rgba(245,240,232,0.92)' }}>{member.nickname}</span>
+              {!isMobile && <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 12, fontWeight: 200, letterSpacing: '0.1em', color: 'rgba(245,240,232,0.92)' }}>{member.nickname}</span>}
               <button onClick={logout} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(245,240,232,0.88)', padding: 0 }}
                 onMouseEnter={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.6)')}
                 onMouseLeave={e => (e.currentTarget.style.color = 'rgba(245,240,232,0.28)')}>
                 Sign out
               </button>
             </div>
-          ) : (
+          ) : !isMobile ? (
             <button onClick={() => setAuthOpen(true)} style={{ background: 'none', border: '1px solid rgba(201,169,110,0.3)', cursor: 'pointer', padding: '7px 18px', fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.28em', textTransform: 'uppercase', color: 'rgba(201,169,110,0.92)', transition: 'all 0.2s' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(201,169,110,0.7)'; e.currentTarget.style.color = 'rgba(201,169,110,1)' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(201,169,110,0.3)'; e.currentTarget.style.color = 'rgba(201,169,110,0.75)' }}>
               Sign in
             </button>
-          )}
+          ) : null}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             style={{
@@ -236,8 +238,8 @@ export default function Navbar({ transparent = false, onHome, onNavigate }: Navb
               style={{
                 position: 'fixed',
                 top: 'calc(var(--nav-height) + 8px)',
-                left: 32,
-                width: 360,
+                left: isMobile ? 16 : 32,
+                width: isMobile ? 'calc(100vw - 32px)' : 360,
                 zIndex: 200,
                 background: 'rgba(12,10,9,0.96)',
                 backdropFilter: 'blur(24px)',

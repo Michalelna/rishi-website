@@ -4,6 +4,7 @@ import { TriangleSymbol } from '../components/Symbols'
 import EventsSection from '../components/EventsSection'
 import { wixClient } from '../lib/wix'
 import JournalTab from './JournalTab'
+import { useWindowWidth } from '../lib/useWindowWidth'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PracticeSymbol } from '../components/Symbols'
+import { useWindowWidth } from '../lib/useWindowWidth'
 
 const practices = [
   {
@@ -35,6 +36,7 @@ const practices = [
 export default function PracticePage() {
   const [active, setActive] = useState<number | null>(null)
   const [playing, setPlaying] = useState<number | null>(null)
+  const isMobile = useWindowWidth() < 768
 
   function handleClick(i: number) {
     if (active === i) {
@@ -122,8 +124,8 @@ export default function PracticePage() {
       </div>
 
       {/* Practice list */}
-      <div style={{ padding: '80px 80px 60px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 900, margin: '0 auto' }}>
+      <div style={{ padding: isMobile ? '80px 16px 60px' : '80px 80px 60px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 16 : 2, maxWidth: 900, margin: '0 auto' }}>
           {practices.map((p, i) => (
             <motion.div
               key={p.title}
@@ -152,9 +154,9 @@ export default function PracticePage() {
               <div style={{ position: 'absolute', inset: 0, background: active === i ? p.color : 'rgba(10,10,10,0.9)', transition: 'background 0.5s ease' }} />
 
               {/* Row */}
-              <div style={{ position: 'relative', zIndex: 2, padding: '32px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 48, fontWeight: 300, color: active === i ? 'rgba(245,240,232,0.15)' : 'rgba(245,240,232,0.06)', lineHeight: 1, minWidth: 40, transition: 'color 0.3s' }}>
+              <div style={{ position: 'relative', zIndex: 2, padding: isMobile ? '20px 16px' : '32px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 12 : 32 }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? 24 : 48, fontWeight: 300, color: active === i ? 'rgba(245,240,232,0.15)' : 'rgba(245,240,232,0.06)', lineHeight: 1, minWidth: isMobile ? 28 : 40, transition: 'color 0.3s' }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div>
@@ -193,11 +195,22 @@ export default function PracticePage() {
                 {playing === i && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 480, opacity: 1 }}
+                    animate={{ height: isMobile ? 'auto' : 480, opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
                     style={{ overflow: 'hidden', position: 'relative', zIndex: 2 }}
                   >
+                    {isMobile ? (
+                      <div style={{ position: 'relative', paddingTop: '56.25%', height: 0 }}>
+                        <iframe
+                          src={`https://www.youtube.com/embed/${p.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
+                          title={p.title}
+                        />
+                      </div>
+                    ) : (
                     <iframe
                       src={`https://www.youtube.com/embed/${p.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -205,6 +218,7 @@ export default function PracticePage() {
                       style={{ width: '100%', height: 480, border: 'none', display: 'block' }}
                       title={p.title}
                     />
+                    )}
                     {/* Close strip */}
                     <button
                       onClick={e => { e.stopPropagation(); setPlaying(null) }}

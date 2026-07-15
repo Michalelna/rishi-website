@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DiamondSymbol, LearningSymbol } from '../components/Symbols'
 import ChakraBody from '../components/ChakraBody'
+import { useWindowWidth } from '../lib/useWindowWidth'
 
 const subNav = [
   'Sanskrit',
@@ -468,11 +469,12 @@ function WordCard({
 function SanskritDictionary() {
   const [active, setActive] = useState<number>(0)
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
+  const isMobile = useWindowWidth() < 768
 
   let globalIndex = 0
 
   return (
-    <div style={{ padding: '64px 80px 120px' }}>
+    <div style={{ padding: isMobile ? '64px 16px 120px' : '64px 80px 120px' }}>
       {/* Page header */}
       <div style={{ marginBottom: 72 }}>
         <p style={{
@@ -549,7 +551,7 @@ function SanskritDictionary() {
                   transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: '1fr 1.8fr',
+                    gridTemplateColumns: isMobile ? '1fr' : '1fr 1.8fr',
                     border: '1px solid rgba(201,169,110,0.18)',
                     background: 'linear-gradient(135deg, rgba(0,0,0,0.28) 0%, rgba(201,169,110,0.03) 100%)',
                     minHeight: 480,
@@ -605,7 +607,7 @@ function SanskritDictionary() {
                       style={{ display: 'flex', alignItems: 'baseline', gap: 24, marginBottom: 8, flexWrap: 'wrap' }}
                     >
                       <h3 style={{
-                        fontFamily: "'Cormorant Garamond', serif", fontSize: 72, fontWeight: 300,
+                        fontFamily: "'Cormorant Garamond', serif", fontSize: isMobile ? 40 : 72, fontWeight: 300,
                         letterSpacing: '0.02em', color: 'rgba(245,240,232,0.95)', lineHeight: 1,
                       }}>{activeWord.roman}</h3>
                       <span style={{
@@ -667,6 +669,7 @@ function SanskritDictionary() {
 
 export default function LearningPage() {
   const [activeNav, setActiveNav] = useState(0)
+  const isMobile = useWindowWidth() < 768
 
   const isSanskrit = activeNav === 0
   const isHistory = activeNav === 1
@@ -744,7 +747,7 @@ export default function LearningPage() {
           style={{
             position: 'relative',
             zIndex: 2,
-            padding: '0 80px 48px',
+            padding: isMobile ? '0 16px 48px' : '0 80px 48px',
             display: 'flex',
             flexDirection: 'column',
             gap: 12,
@@ -796,8 +799,8 @@ export default function LearningPage() {
         style={{
           display: 'flex',
           justifyContent: 'center',
-          gap: 48,
-          padding: '24px 80px 48px',
+          gap: isMobile ? 24 : 48,
+          padding: isMobile ? '24px 16px 32px' : '24px 80px 48px',
           borderBottom: '1px solid rgba(201,169,110,0.16)',
           flexWrap: 'wrap',
         }}
@@ -872,7 +875,7 @@ export default function LearningPage() {
             transition={{ duration: 0.4 }}
           >
             {/* Yoga History */}
-            <div style={{ padding: '72px 80px 0' }}>
+            <div style={{ padding: isMobile ? '72px 16px 0' : '72px 80px 0' }}>
               <div style={{ maxWidth: 820, margin: '0 auto' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 40 }}>
                   <div style={{ width: 32, height: 1, background: 'rgba(201,169,110,0.5)', flexShrink: 0 }} />
@@ -885,7 +888,7 @@ export default function LearningPage() {
                   fontFamily: "'Cormorant Garamond', serif", fontSize: 42, fontWeight: 300,
                   letterSpacing: '0.05em', color: 'var(--white)', marginBottom: 40, lineHeight: 1.15,
                 }}>A Brief History of Yoga</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px 56px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '32px 56px' }}>
                   {[
                     {
                       era: 'c. 3000 BCE',

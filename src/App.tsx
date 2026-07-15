@@ -6,6 +6,7 @@ import Navbar from './components/Navbar'
 import { TriangleSymbol, DiamondSymbol, PracticeSymbol } from './components/Symbols'
 import { AuthProvider } from './lib/auth'
 import OAuthCallback from './pages/OAuthCallback'
+import { useWindowWidth } from './lib/useWindowWidth'
 
 const LearningPage = lazy(() => import('./pages/LearningPage'))
 const PracticePage = lazy(() => import('./pages/PracticePage'))
@@ -78,9 +79,10 @@ function SymbolEl({ type, hovered }: { type: string; hovered: boolean }) {
 function HomePageView() {
   const [hovered, setHovered] = useState<string | null>(null)
   const navigate = useNavigate()
+  const isMobile = useWindowWidth() < 768
 
   return (
-    <div style={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', width: '100vw', height: '100vh', overflow: 'hidden' }}>
       {homePanels.map((panel, i) => {
         const isHov = hovered === panel.id
         const isOther = hovered !== null && hovered !== panel.id
@@ -96,9 +98,9 @@ function HomePageView() {
             onHoverEnd={() => setHovered(null)}
             onClick={() => navigate('/' + panel.id)}
             onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('/' + panel.id) } }}
-            animate={{ flex }}
+            animate={isMobile ? {} : { flex }}
             transition={{ duration: 0.75, ease: [0.43, 0.13, 0.23, 0.96] }}
-            style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
+            style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer', flexShrink: 0, height: isMobile ? '33.33vh' : '100vh', flex: isMobile ? undefined : flex }}
           >
             <motion.div
               layoutId={`panel-bg-${panel.id}`}
@@ -224,6 +226,7 @@ function AppInner() {
   const navigate = useNavigate()
   const location = useLocation()
   const isHome = location.pathname === '/'
+  const isMobile = useWindowWidth() < 768
 
   useEffect(() => {
     document.getElementById('splash')?.remove()
@@ -303,8 +306,8 @@ function AppInner() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 52,
-            padding: '36px 80px',
+            gap: isMobile ? 16 : 52,
+            padding: isMobile ? '24px 20px' : '36px 80px',
             borderTop: '1px solid rgba(201,169,110,0.14)',
             background: '#1c1820',
           }}

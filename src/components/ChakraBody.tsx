@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useWindowWidth } from '../lib/useWindowWidth'
 
 const chakras = [
   {
@@ -76,11 +77,12 @@ const chakras = [
 
 export default function ChakraBody() {
   const [active, setActive] = useState<number | null>(null)
+  const isMobile = useWindowWidth() < 768
   const BODY_HEIGHT = 640
 
   return (
     <div style={{
-      padding: '100px 80px',
+      padding: isMobile ? '60px 16px' : '100px 80px',
       background: '#1c1820',
       borderTop: '1px solid rgba(201,169,110,0.06)',
     }}>
@@ -105,12 +107,12 @@ export default function ChakraBody() {
       </div>
 
       {/* Main layout: body + labels */}
-      <div style={{ display: 'flex', gap: 0, alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 0, alignItems: 'flex-start' }}>
 
         {/* Body image column */}
         <div style={{
           position: 'relative',
-          width: 340,
+          width: isMobile ? '100%' : 340,
           height: BODY_HEIGHT,
           flexShrink: 0,
         }}>
@@ -241,7 +243,8 @@ export default function ChakraBody() {
           ))}
         </div>
 
-        {/* Connector + labels column */}
+        {/* Connector + labels column — hidden on mobile */}
+        {!isMobile && (
         <div style={{
           position: 'relative',
           flex: 1,
@@ -380,7 +383,37 @@ export default function ChakraBody() {
             )
           })}
         </div>
+        )}
       </div>
+
+      {/* Mobile chakra labels list */}
+      {isMobile && (
+        <div style={{ marginTop: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {chakras.map((c, i) => (
+            <motion.div
+              key={c.name}
+              onClick={() => setActive(active === i ? null : i)}
+              style={{
+                cursor: 'pointer',
+                padding: '14px 16px',
+                border: `1px solid ${active === i ? c.color + '66' : 'rgba(245,240,232,0.06)'}`,
+                background: active === i ? `${c.color}0a` : 'transparent',
+                transition: 'border-color 0.2s, background 0.2s',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: active === i ? 8 : 0 }}>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: c.color, flexShrink: 0 }} />
+                <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300, letterSpacing: '0.28em', textTransform: 'uppercase', color: c.color }}>{c.name}</span>
+                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 13, fontWeight: 300, fontStyle: 'italic', color: 'rgba(245,240,232,0.60)' }}>{c.sanskrit}</span>
+                <span style={{ marginLeft: 'auto', fontFamily: "'Raleway', sans-serif", fontSize: 8, letterSpacing: '0.25em', color: c.color, border: `1px solid ${c.color}`, padding: '2px 6px' }}>{c.mantra}</span>
+              </div>
+              {active === i && (
+                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 14, fontWeight: 300, fontStyle: 'italic', lineHeight: 1.7, color: 'rgba(245,240,232,0.82)', paddingLeft: 22 }}>{c.desc}</p>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
