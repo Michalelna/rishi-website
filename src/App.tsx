@@ -1,7 +1,6 @@
-import { useEffect, lazy, Suspense } from 'react'
+import { useEffect, useRef, lazy, Suspense } from 'react'
 import { AnimatePresence, motion, LayoutGroup } from 'framer-motion'
 import { BrowserRouter, Routes, Route, useNavigate, useLocation, Link } from 'react-router-dom'
-import { useState, useRef } from 'react'
 import Navbar from './components/Navbar'
 import { TriangleSymbol, DiamondSymbol, PracticeSymbol } from './components/Symbols'
 import { AuthProvider } from './lib/auth'
@@ -76,27 +75,45 @@ function SymbolEl({ type, hovered }: { type: string; hovered: boolean }) {
 }
 
 function HomePageView() {
-  const [hovered, setHovered] = useState<number | null>(null)
   const navigate = useNavigate()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = containerRef.current!.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    setHovered(Math.min(2, Math.floor((x / rect.width) * 3)))
-  }
+  useEffect(() => {
+    const container = containerRef.current!
+    const panels = Array.from(container.querySelectorAll<HTMLElement>('.home-panel'))
+    let cur = -1
+
+    const onMove = (e: MouseEvent) => {
+      const rect = container.getBoundingClientRect()
+      const idx = Math.min(2, Math.floor(((e.clientX - rect.left) / rect.width) * 3))
+      if (idx === cur) return
+      cur = idx
+      panels.forEach((p, i) => {
+        p.classList.toggle('is-active', i === idx)
+        p.classList.toggle('is-dim', i !== idx)
+      })
+    }
+
+    const onLeave = () => {
+      if (cur === -1) return
+      cur = -1
+      panels.forEach(p => p.classList.remove('is-active', 'is-dim'))
+    }
+
+    container.addEventListener('mousemove', onMove)
+    container.addEventListener('mouseleave', onLeave)
+    return () => {
+      container.removeEventListener('mousemove', onMove)
+      container.removeEventListener('mouseleave', onLeave)
+    }
+  }, [])
 
   return (
-    <div
-      className="home-panels"
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => setHovered(null)}
-    >
+    <div className="home-panels" ref={containerRef}>
       {homePanels.map((panel, i) => (
         <div
           key={panel.id}
-          className={`home-panel${hovered === i ? ' is-active' : hovered !== null ? ' is-dim' : ''}`}
+          className="home-panel"
           role="button"
           tabIndex={0}
           aria-label={`Enter ${panel.label} — ${panel.sublabel}`}
@@ -117,7 +134,7 @@ function HomePageView() {
           {/* Symbol */}
           <div className="panel-symbol-wrap">
             <div className="panel-symbol">
-              <SymbolEl type={panel.symbol} hovered={hovered === i} />
+              <SymbolEl type={panel.symbol} hovered={false} />
             </div>
           </div>
 
