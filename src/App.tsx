@@ -20,13 +20,13 @@ const pageExit  = { opacity: 0, transition: { duration: 0.25, ease: 'easeIn' as 
 
 const homePanels = [
   {
-    id: 'community' as Page,
-    label: 'Community',
-    sublabel: 'Connect & Grow',
-    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=1200&q=55&fit=crop&fm=webp',
-    bgPosition: '50% 35%',
-    tint: 'rgba(15,35,20,0.5)',
-    symbol: 'triangle',
+    id: 'learning' as Page,
+    label: 'Learning',
+    sublabel: 'Study & Discover',
+    image: 'https://images.unsplash.com/photo-1571844088753-73ca0880bcd9?w=1200&q=55&fit=crop&fm=webp',
+    bgPosition: 'center',
+    tint: 'rgba(55,22,8,0.5)',
+    symbol: 'diamond',
   },
   {
     id: 'practice' as Page,
@@ -38,13 +38,13 @@ const homePanels = [
     symbol: 'circles',
   },
   {
-    id: 'learning' as Page,
-    label: 'Learning',
-    sublabel: 'Study & Discover',
-    image: 'https://images.unsplash.com/photo-1571844088753-73ca0880bcd9?w=1200&q=55&fit=crop&fm=webp',
-    bgPosition: 'center',
-    tint: 'rgba(55,22,8,0.5)',
-    symbol: 'diamond',
+    id: 'community' as Page,
+    label: 'Community',
+    sublabel: 'Connect & Grow',
+    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=1200&q=55&fit=crop&fm=webp',
+    bgPosition: '50% 35%',
+    tint: 'rgba(15,35,20,0.5)',
+    symbol: 'triangle',
   },
 ]
 

@@ -114,10 +114,7 @@ export default function ChakraBody() {
           height: BODY_HEIGHT,
           flexShrink: 0,
         }}>
-          {/* Dark base */}
-          <div style={{ position: 'absolute', inset: 0, background: '#1c1820' }} />
-
-          {/* Photo — high brightness so the figure reads clearly; multiply removes white bg */}
+          {/* Photo */}
           <img
             src="https://cdn.mos.cms.futurecdn.net/eBKx8m8rFfSPHmaqxfQMWF-1000-80.jpg.webp"
             alt="Meditating figure"
@@ -128,8 +125,6 @@ export default function ChakraBody() {
               height: '100%',
               objectFit: 'cover',
               objectPosition: 'center center',
-              mixBlendMode: 'multiply',
-              filter: 'contrast(0.95) brightness(3.5) saturate(0.5)',
             }}
           />
 
@@ -279,9 +274,10 @@ export default function ChakraBody() {
               >
                 {/* Horizontal connector line — spans from body dot to label */}
                 <motion.div
-                  animate={{ width: isActive ? 220 : 185, opacity: isActive ? 0.9 : 0.35 }}
+                  animate={{ opacity: isActive ? 0.9 : 0.4 }}
                   transition={{ duration: 0.25 }}
                   style={{
+                    width: 220,
                     height: 1,
                     background: c.color,
                     flexShrink: 0,
