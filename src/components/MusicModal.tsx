@@ -131,16 +131,17 @@ const tracks = [
 
 // ── Component ────────────────────────────────────────────────────────────────
 
-interface MusicModalProps { open: boolean; onClose: () => void }
+interface MusicModalProps { open: boolean; onClose: (keepSound?: boolean) => void }
 
 export default function MusicModal({ open, onClose }: MusicModalProps) {
   const [playing, setPlaying]         = useState<number | null>(null)
   const [volume, setVolume]           = useState(0.65)
   const [hoveredTrack, setHoveredTrack] = useState<number | null>(null)
-  const closeRef  = useRef<HTMLButtonElement>(null)
-  const ctxRef    = useRef<AudioContext | null>(null)
-  const masterRef = useRef<GainNode | null>(null)
-  const engineRef = useRef<AudioEngine | null>(null)
+  const closeRef    = useRef<HTMLButtonElement>(null)
+  const ctxRef      = useRef<AudioContext | null>(null)
+  const masterRef   = useRef<GainNode | null>(null)
+  const engineRef   = useRef<AudioEngine | null>(null)
+  const keepSoundRef = useRef(false)
 
   // Keyboard / focus
   useEffect(() => {
@@ -151,9 +152,12 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
     return () => document.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  // Stop audio when modal closes
+  // Stop audio only when modal closes without "Keep Sound"
   useEffect(() => {
-    if (!open) stopCurrent()
+    if (!open) {
+      if (!keepSoundRef.current) stopCurrent()
+      keepSoundRef.current = false
+    }
   }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function getCtx() {
@@ -207,18 +211,19 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            onClick={onClose}
+            onClick={() => onClose()}
             style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(5,5,4,0.7)', backdropFilter: 'blur(8px)' }}
           />
 
           <motion.div
             role="dialog" aria-modal="true" aria-label="Sound Bath"
-            initial={{ opacity: 0, y: -16, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.97 }}
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
             style={{
-              position: 'fixed', top: 82, left: '50%', transform: 'translateX(-50%)',
+              position: 'fixed', top: '50%', left: '50%',
+              transform: 'translate(-50%, -50%)',
               zIndex: 201, width: 420,
               background: 'rgba(28,24,32,0.97)',
               border: '1px solid rgba(201,169,110,0.15)',
@@ -229,20 +234,13 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
             <div style={{
               padding: '28px 32px 20px',
               borderBottom: '1px solid rgba(201,169,110,0.1)',
-              display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
             }}>
-              <div>
-                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.35em', color: 'rgba(201,169,110,0.72)', textTransform: 'uppercase', marginBottom: 6 }}>
-                  Ambient Sound
-                </p>
-                <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 300, letterSpacing: '0.06em', color: 'rgba(245,240,232,0.92)' }}>
-                  Sound Bath
-                </h2>
-              </div>
-              <button ref={closeRef} onClick={onClose} aria-label="Close sound bath"
-                style={{ background: 'none', border: '1px solid rgba(245,240,232,0.12)', cursor: 'pointer', color: 'rgba(245,240,232,0.5)', padding: '6px 10px', lineHeight: 1, fontSize: 16, marginTop: 2 }}>
-                ×
-              </button>
+              <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, fontWeight: 300, letterSpacing: '0.35em', color: 'rgba(201,169,110,0.72)', textTransform: 'uppercase', marginBottom: 6 }}>
+                Ambient Sound
+              </p>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, fontWeight: 300, letterSpacing: '0.06em', color: 'rgba(245,240,232,0.92)' }}>
+                Sound Bath
+              </h2>
             </div>
 
             {/* Now playing */}
@@ -342,7 +340,7 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
 
             {/* Volume */}
             <div style={{
-              padding: '16px 32px 24px',
+              padding: '16px 32px 0',
               borderTop: '1px solid rgba(201,169,110,0.08)',
               display: 'flex', alignItems: 'center', gap: 16,
             }}>
@@ -369,6 +367,40 @@ export default function MusicModal({ open, onClose }: MusicModalProps) {
               <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: 9, letterSpacing: '0.15em', color: 'rgba(245,240,232,0.3)', minWidth: 28, textAlign: 'right' }}>
                 {Math.round(volume * 100)}
               </span>
+            </div>
+
+            {/* Actions */}
+            <div style={{
+              padding: '20px 32px 28px',
+              display: 'flex', gap: 12,
+            }}>
+              <button
+                ref={closeRef}
+                onClick={() => { keepSoundRef.current = true; onClose(true) }}
+                style={{
+                  flex: 1, padding: '11px 0', cursor: 'pointer',
+                  fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
+                  letterSpacing: '0.22em', textTransform: 'uppercase',
+                  color: 'rgba(201,169,110,0.9)',
+                  background: 'rgba(201,169,110,0.08)',
+                  border: '1px solid rgba(201,169,110,0.35)',
+                  transition: 'all 0.2s',
+                }}>
+                Keep Sound
+              </button>
+              <button
+                onClick={() => onClose()}
+                style={{
+                  flex: 1, padding: '11px 0', cursor: 'pointer',
+                  fontFamily: "'Raleway', sans-serif", fontSize: 10, fontWeight: 300,
+                  letterSpacing: '0.22em', textTransform: 'uppercase',
+                  color: 'rgba(245,240,232,0.4)',
+                  background: 'transparent',
+                  border: '1px solid rgba(245,240,232,0.1)',
+                  transition: 'all 0.2s',
+                }}>
+                Cancel
+              </button>
             </div>
           </motion.div>
         </>

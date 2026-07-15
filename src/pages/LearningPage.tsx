@@ -9,36 +9,6 @@ const subNav = [
   'Chakras',
 ]
 
-const courses = [
-  {
-    title: 'The Origins of Yoga',
-    duration: '4h 20m',
-    lessons: 12,
-    level: 'Beginner',
-    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=55&fit=crop&fm=webp',
-  },
-  {
-    title: 'Pranayama & Breath',
-    duration: '2h 45m',
-    lessons: 8,
-    level: 'Intermediate',
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=55&fit=crop&fm=webp',
-  },
-  {
-    title: 'Sacred Geometry',
-    duration: '3h 10m',
-    lessons: 10,
-    level: 'Advanced',
-    image: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600&q=55&fit=crop&fm=webp',
-  },
-  {
-    title: 'The Chakra System',
-    duration: '5h 00m',
-    lessons: 15,
-    level: 'Intermediate',
-    image: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&q=55&fit=crop&fm=webp',
-  },
-]
 
 interface SanskritWord {
   file: string
@@ -697,7 +667,6 @@ function SanskritDictionary() {
 
 export default function LearningPage() {
   const [activeNav, setActiveNav] = useState(0)
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
 
   const isSanskrit = activeNav === 0
   const isHistory = activeNav === 1
@@ -975,129 +944,6 @@ export default function LearningPage() {
               </div>
             </div>
 
-
-            {/* Course grid */}
-            <div style={{ padding: '64px 80px 60px' }}>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                style={{
-                  fontFamily: "'Raleway', sans-serif",
-                  fontSize: 11,
-                  fontWeight: 300,
-                  letterSpacing: '0.3em',
-                  color: 'rgba(245,240,232,0.82)',
-                  textTransform: 'uppercase',
-                  marginBottom: 40,
-                }}
-              >
-                Featured courses
-              </motion.p>
-
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: 24,
-              }}>
-                <AnimatePresence>
-                  {courses.map((course, i) => (
-                    <motion.div
-                      key={course.title}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 * i + 0.6, duration: 0.6 }}
-                      onHoverStart={() => setHoveredCard(i)}
-                      onHoverEnd={() => setHoveredCard(null)}
-                      style={{
-                        position: 'relative',
-                        borderRadius: 2,
-                        overflow: 'hidden',
-                        cursor: 'pointer',
-                        background: '#111',
-                        border: '1px solid rgba(201,169,110,0.16)',
-                      }}
-                    >
-                      <motion.div
-                        animate={{ scale: hoveredCard === i ? 1.05 : 1 }}
-                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                        style={{
-                          height: 200,
-                          backgroundImage: `url(${course.image})`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }}
-                      />
-                      <div style={{
-                        position: 'absolute',
-                        top: 0, left: 0, right: 0,
-                        height: 200,
-                        background: 'linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.7) 100%)',
-                      }} />
-                      <div style={{
-                        position: 'absolute',
-                        top: 16, left: 16,
-                        padding: '3px 10px',
-                        border: '1px solid rgba(201,169,110,0.4)',
-                        fontFamily: "'Raleway', sans-serif",
-                        fontSize: 9,
-                        letterSpacing: '0.25em',
-                        color: 'rgba(201,169,110,0.8)',
-                        textTransform: 'uppercase',
-                        background: 'rgba(0,0,0,0.25)',
-                        backdropFilter: 'blur(4px)',
-                      }}>
-                        {course.level}
-                      </div>
-                      <div style={{ padding: '20px 24px 24px' }}>
-                        <h3 style={{
-                          fontFamily: "'Cormorant Garamond', serif",
-                          fontSize: 20,
-                          fontWeight: 400,
-                          letterSpacing: '0.05em',
-                          color: 'var(--white)',
-                          marginBottom: 12,
-                          lineHeight: 1.3,
-                        }}>
-                          {course.title}
-                        </h3>
-                        <div style={{
-                          display: 'flex',
-                          gap: 20,
-                          fontFamily: "'Raleway', sans-serif",
-                          fontSize: 10,
-                          fontWeight: 300,
-                          letterSpacing: '0.15em',
-                          color: 'rgba(245,240,232,0.82)',
-                          textTransform: 'uppercase',
-                        }}>
-                          <span>{course.duration}</span>
-                          <span>·</span>
-                          <span>{course.lessons} lessons</span>
-                        </div>
-                      </div>
-                      <AnimatePresence>
-                        {hoveredCard === i && (
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            style={{
-                              position: 'absolute',
-                              inset: 0,
-                              background: 'rgba(201,169,110,0.04)',
-                              border: '1px solid rgba(201,169,110,0.2)',
-                              borderRadius: 2,
-                              pointerEvents: 'none',
-                            }}
-                          />
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
