@@ -1,4 +1,4 @@
-import { useEffect, useRef, lazy, Suspense } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { AnimatePresence, motion, LayoutGroup } from 'framer-motion'
 import { BrowserRouter, Routes, Route, useNavigate, useLocation, Link } from 'react-router-dom'
 import Navbar from './components/Navbar'
@@ -74,6 +74,7 @@ function SymbolEl({ type, hovered }: { type: string; hovered: boolean }) {
 }
 
 function HomePageView() {
+  const [activeIdx, setActiveIdx] = useState<number | null>(null)
   const navigate = useNavigate()
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -91,12 +92,14 @@ function HomePageView() {
         p.classList.toggle('is-active', i === idx)
         p.classList.toggle('is-dim', i !== idx)
       })
+      setActiveIdx(idx)
     }
 
     const onLeave = () => {
       if (cur === -1) return
       cur = -1
       panels.forEach(p => p.classList.remove('is-active', 'is-dim'))
+      setActiveIdx(null)
     }
 
     container.addEventListener('mousemove', onMove)
@@ -133,7 +136,7 @@ function HomePageView() {
           {/* Symbol */}
           <div className="panel-symbol-wrap">
             <div className="panel-symbol">
-              <SymbolEl type={panel.symbol} hovered={false} />
+              <SymbolEl type={panel.symbol} hovered={activeIdx === i} />
             </div>
           </div>
 
